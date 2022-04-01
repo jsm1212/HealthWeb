@@ -1,0 +1,68 @@
+@charset "UTF-8";
+div{
+	border: 1px solid black;
+}
+
+.contentCenterPosition{
+	display: flex;
+	justify-content: center;
+}
+
+#mainFrame{
+	width: 50%;
+	display: felx;
+	justify-content: center;
+}
+
+.standardListNumber{
+	width: 8%;
+	text-align: center;
+}
+
+.standardListTitle{
+	width: 45%;
+	text-align: center;
+}
+
+.standardListWDate{
+	width: 20%;
+	text-align: center;
+}
+
+.standardListWriter{
+	width: 15%;
+	text-align: center;
+}
+
+.listNumber{
+	width: 8%;
+	text-align: center;
+}
+
+.listTitle{
+	width: 43%;
+	padding: 0 1% 0 1%;
+}
+
+.listWDate{
+	width: 20%;
+	text-align: center;
+}
+
+.listWriter{
+	width: 15%;
+	text-align: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
