@@ -10,7 +10,6 @@ div{
 
 #mainFrame{
 	width: 50%;
-	display: felx;
 	justify-content: center;
 }
 
@@ -54,6 +53,28 @@ div{
 	text-align: center;
 }
 
+#nonList{
+	text-align: center;
+}
+
+ul,li{
+	list-style-type: none;
+	float: left;
+	outline: 1px solid gray;
+	margin: 0 5px 0 5px;
+	text-align: center;
+	padding: 0;
+}
+
+#test{
+	display: table;
+	justify-content: center;
+}
+
+/* #pagination{
+	display: block;
+	text-align: center;
+} */
 
 
 
