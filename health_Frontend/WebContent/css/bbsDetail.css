@@ -1,0 +1,101 @@
+@charset "UTF-8";
+div{
+	border: 1px solid black;
+}
+input{
+	width: 99%;
+}
+
+textarea{
+	resize: none;
+	width: 99%;
+	height: auto;
+	overflow-y: hidden;
+	overflow-x: hidden;
+	margin: 15px 0;
+}
+
+button{
+	margin: 0 0 0 1%;
+}
+
+.contentCenterPosition{
+	display: flex;
+	justify-content: center;
+}
+
+#mainFrame{
+	width: 50%;
+	justify-content: center;
+}
+
+
+#titleFrame{
+	display: flex;
+	justify-content: space-between;
+	margin: 0 0 15px 0;
+}
+
+#writerInfo{
+	display: flex;
+	justify-content: space-between;
+	padding: 0 1%;
+	margin: 15px 0;
+}
+
+.infoHorizontal{
+	display: flex;
+	padding: 0 1%;
+}
+
+#contentFrame{
+	margin: 20px 0;
+}
+
+#imgPosition{
+	width: 50%;
+	height: 350px;
+}
+
+#contentBox{
+	padding: 15px 2%;
+}
+
+#replyFrame{
+	padding: 15px 1%;
+}
+
+#writeReplyFrame{
+	display: flex;
+	justify-content: space-between;
+	border: 2px solid green;
+}
+
+#replyWrite{
+	
+}
+
+#replyBtnFrame{
+	display: table;
+	width: 7%;
+	text-align: center;
+}
+
+#test{
+	display: table-cell;
+	vertical-align: middle;
+}
+
+#writeReplyBtn{
+	display: table-cell;
+	vertical-align: middle;
+}
+
+
+
+
+
+
+
+
+

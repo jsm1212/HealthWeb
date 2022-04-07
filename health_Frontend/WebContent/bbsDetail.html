@@ -2,9 +2,130 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>나홀로GYM에 게시글</title>
+<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link rel="shortcut icon" type="image⁄x-icon" href="https://firebasestorage.googleapis.com/v0/b/healthapp-client.appspot.com/o/images%2Fhome.png?alt=media&token=c30ebcc4-6ca5-4745-a01e-ecaf8e97d972">
+<link href="css/bbsDetail.css?afters" rel="stylesheet" />
 </head>
 <body>
-bbsDetail입니다.
+<div class="contentCenterPosition">
+	<div id="mainFrame">
+		<!-- 제목 -->
+		<div id=titleFrame>
+			<div style="width:10%;">
+				제목
+			</div>
+			<div style="width:90%; padding: 0 1%;">
+				<input type="text" id="title" readonly="readonly">
+			</div>
+		</div>
+		
+		<!-- 작성자, 작성일, 조회수, 좋아요 -->
+		<div id="writerInfo">
+			<!-- 작성자 -->
+			<div class="infoHorizontal" style="width:45%">
+				<input type="text" id="nickname" readonly="readonly">
+			</div>
+			<!-- 작성일 -->
+			<div class="infoHorizontal" style="width:20%">
+				<input type="text" id="wdate" readonly="readonly">
+			</div>
+			<!-- 좋아요 / 조회수 -->
+			<div class="infoHorizontal" style="width:13%" id="likeAndCount">
+				
+			</div>			
+		</div>
+		
+		<!-- 내용 -->
+		<div id="contentFrame" align="center">
+			<div id="imgPosition">
+				<!-- 이미지 슬라이가 들어갈 공간 -->
+			</div>
+			<div id="contentBox">
+				<textarea id="content" readonly="readonly"></textarea>
+				<div align="right">
+					<button type="button" id="updateBtn">수정</button><button type="button" id="deleteBtn">삭제</button>
+				</div>
+			</div>
+		</div>
+		
+		<div>
+			<div>
+				댓글
+			</div>
+			<div id=replyFrame>
+				<div class="replyList">
+					댓글 예시입니다.
+				</div>
+			</div>
+			<div id="writeReplyFrame">
+				<div style="width:93%">
+					<textarea id="replyWrite"></textarea>
+				</div>
+				<div id=replyBtnFrame>
+					<div id="test">
+						<button type="button" id="writeReplyBtn">등록</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+</div>
+
+<script type="text/javascript">
+//sessionStorage에서 가져온 로그인 정보
+let str = sessionStorage.getItem("login");
+// 가져온 로그인정보를 json형태로 변환
+let userInfo = JSON.parse(str);
+// 넘겨받은 seq번호 변수에 저장
+const url = new URL(location.href);
+const urlParams = url.searchParams;
+let seq = urlParams.get("seq");
+
+//alert("seq: " + seq);
+
+$.ajax({
+	url:"http://localhost:3000/bbsDetail",
+	type:"post",
+	data:{"seq": seq},
+	success: function(bbs){
+		// 제목
+		$("#title").val(bbs.title);
+		// 작성자
+		$("#nickname").val(bbs.nickname);
+		// 작성일
+		var dateArr = bbs.wdate.split(":")	// :단위로 나눠서 배열로 저장
+		const wdate= dateArr[0] + ":" + dateArr[1]	// 변수에 원하는 표기방법으로 저장
+		$("#wdate").val(wdate);
+		// 좋아요 및 조회수
+		$("#likeAndCount").text(bbs.bbsLike + " / " + bbs.readcount);
+		if(bbs.bbsImage == null){
+			//$("#imgPosition").hide();
+			//$("#imgPosition").empty();
+			document.querySelector("#imgPosition").style.display="none";
+		}
+		$("#content").text(bbs.content);
+		if(userInfo.id != bbs.id){
+			$("#updateBtn").hide();
+			$("#deleteBtn").hide();
+		}
+	},
+	error: function(){
+		alert('error');
+	}
+});
+
+// textarea높이 자동조절
+var txtArea = $("#content");
+if (txtArea) {
+    txtArea.each(function(){
+        $(this).height(this.scrollHeight);
+    });
+}
+
+
+</script>
 </body>
 </html>
