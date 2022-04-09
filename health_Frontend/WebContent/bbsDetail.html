@@ -59,6 +59,10 @@
 					<div>
 						<button type="button" id="goToListBtn">목록으로</button>
 					</div>
+					<!-- 좋아요 버튼 -->
+					<div>
+						<button type="button" id="bbsLikeBtn">좋아요버튼</button>
+					</div>
 					<div align="right" style="width:15%;">
 						<button type="button" id="updateBtn">수정</button>
 						<button type="button" id="deleteBtn">삭제</button>
@@ -89,11 +93,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
-		
-		<!-- 좋아요 테스트 버튼 -->
-		<div>
-			<button type="button" id="testLikeBtn">좋아요 테스트</button>
 		</div>
 		
 	</div>
@@ -155,7 +154,7 @@ $("#writeReplyBtn").click(function(){
 });
 
 // 좋아요 테스트버튼 클릭
-$("#testLikeBtn").click(function(){
+$("#bbsLikeBtn").click(function(){
 	$.ajax({
 		url: "http://localhost:3000/likeCount_W",
 		type: "post",
@@ -284,7 +283,8 @@ function getReplyList(){
 			
 			$.each(list, function (i, item) {
 				let str = '<div class="replywriter">' +
-								'<div>' + item.nickname + '</div>'
+								'<div>' + item.nickname + '</div>' 
+								//+ '<div class="replyReply" onclick="replyReply()">'
 				if(userInfo.id == item.id){
 					str += 		'<div class="deleteReply" onclick="deleteReply(' + item.seq + ')"' + '>삭제하기</div>'
 				}
