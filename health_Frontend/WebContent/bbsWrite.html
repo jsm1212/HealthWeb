@@ -161,9 +161,7 @@ $(document).ready(function(){
 	
 	// 왜 마지막파일은 인식을 못할까?
 	$("#testBtn").click(function(){
-		for(var i=0; i< fileCount; i++){
-			console.log(imgArr[i]);
-		}
+		
 	});
 	
 	
@@ -181,18 +179,19 @@ $(document).ready(function(){
 	firebase.initializeApp(firebaseConfig);
 	const storage = firebase.storage();
 
+	
+	
 	// 첨부하기 버튼 클릭
 	$('#fileSubmit').click(function() {
 		// 사진업로드 대기 문구창
 		//alert('사진업로드가 완료될때 까지 기다려주세요.');
 		
-		if(fileCount == 0){
-			alert('등록된 이미지가 없습니다')
-		}else{
-		
 		// 선택된 파일의 갯수
 		fileCount = document.querySelector('#fileSelect').files.length;
 		
+		if(fileCount == 0){
+			alert('등록된 이미지가 없습니다')
+		}else{
 		// 다중업로드를 위한 for문
 		for(var i=0; i<fileCount; i++){
 			var today = new Date();
@@ -233,7 +232,7 @@ $(document).ready(function(){
 		// 사진 저장 멘트
 		//setTimeout(function() {alert('사진이 저장되었습니다.')}, 5000);
 		// 현재 이미지 안뜸 문제 수정 필요함
-		loading()
+		loading();
 		$("#fileSubmit").hide();
 		}
 	});
