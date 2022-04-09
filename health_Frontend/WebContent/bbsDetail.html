@@ -91,6 +91,11 @@
 			</div>
 		</div>
 		
+		<!-- 좋아요 테스트 버튼 -->
+		<div>
+			<button type="button" id="testLikeBtn">좋아요 테스트</button>
+		</div>
+		
 	</div>
 </div>
 
@@ -149,6 +154,33 @@ $("#writeReplyBtn").click(function(){
 	
 });
 
+// 좋아요 테스트버튼 클릭
+$("#testLikeBtn").click(function(){
+	$.ajax({
+		url: "http://localhost:3000/likeCount_W",
+		type: "post",
+		data: {
+			"bbs_no": seq,
+			"user_id": userInfo.id
+		},
+		success: function(msg){
+			if(msg == "count"){
+				alert('좋아요를 눌렀습니다!');
+				getBbs();
+				
+			}else{ // msg == notCount 일때
+				likeCancel();
+			}
+			
+		},
+		error: function(){
+			alert('error');
+		}
+	});
+});
+
+
+// 이미지 슬라이드 관련 변수지정
 let slides; //전체 슬라이드 컨테이너 
 let slideImg; //모든 슬라이드들  
 let slideCount; // 슬라이드 개수 
@@ -156,57 +188,10 @@ let slideCount; // 슬라이드 개수
 
 let currentIdx = 0; //현재 슬라이드 index
 
+// 페이지가 시작될때 완료될 부분
 $(document).ready(function(){
 	// 선택한 게시글 목록 불러오기
-	$.ajax({
-		url:"http://localhost:3000/bbsDetail",
-		type:"post",
-		data:{"seq": seq, "id": userInfo.id},
-		success: function(bbs){
-			// 제목
-			$("#title").val(bbs.title);
-			// 작성자
-			$("#nickname").val(bbs.nickname);
-			// 작성일
-			var dateArr = bbs.wdate.split(":")	// :단위로 나눠서 배열로 저장
-			const wdate= dateArr[0] + ":" + dateArr[1]	// 변수에 원하는 표기방법으로 저장
-			$("#wdate").val(wdate);
-			// 좋아요 및 조회수
-			$("#likeAndCount").text(bbs.bbsLike + " / " + bbs.readcount);
-			if(bbs.bbsImage == null){
-				//$("#imgPosition").hide();
-				//$("#imgPosition").empty();
-				document.querySelector("#imgPosition").style.display="none";
-			}
-			// url을 통한 이미지 다운로드
-			var imgArr = bbs.bbsImage.split(",");
-			var urlFront = "https://firebasestorage.googleapis.com/v0/b/healthapp-client.appspot.com/o/images%2F";
-			var urlBack = "?alt=media&token=df6804c5-5a28-44a9-a6b4-0a9e8df1589e";
-			$.each(imgArr, function(i, item){
-				let choiceImgArr = item.split("/");
-				let imgName = choiceImgArr[1];
-				
-				let str = '<li><img src="' + (urlFront + imgName + urlBack) + '" width="300px" height="300px" alt="" style="float:left;"></li>'
-								
-				$(".slides").append(str);
-			});
-			
-			slides = document.querySelector('.slides'); //전체 슬라이드 컨테이너 
-			slideImg = document.querySelectorAll('.slides li'); //모든 슬라이드들  
-			slideCount = slideImg.length; // 슬라이드 개수 
-			//전체 슬라이드 컨테이너 넓이 설정
-			slides.style.width = (slideWidth + slideMargin) * slideCount + 'px'; 
-			
-			$("#content").text(bbs.content);
-			if(userInfo.id != bbs.id){
-				$("#updateBtn").hide();
-				$("#deleteBtn").hide();
-			}
-		},
-		error: function(){
-			alert('error');
-		}
-	});
+	getBbs();
 	
 	// 해당 게시글의 댓글 가져오기
 	getReplyList();
@@ -227,6 +212,65 @@ function resize(obj) {
 	obj.style.height = '1px';
 	obj.style.height = (12 + obj.scrollHeight) + 'px';
     
+}
+
+// 게시글 정보 불러오기
+function getBbs() {
+	$.ajax({
+		url:"http://localhost:3000/bbsDetail",
+		type:"post",
+		data:{
+			"bbs_seq": seq,
+			"user_id": userInfo.id
+		},
+		success: function(bbs){
+			// 제목
+			$("#title").val(bbs.title);
+			// 작성자
+			$("#nickname").val(bbs.nickname);
+			// 작성일
+			var dateArr = bbs.wdate.split(":")	// :단위로 나눠서 배열로 저장
+			const wdate= dateArr[0] + ":" + dateArr[1]	// 변수에 원하는 표기방법으로 저장
+			$("#wdate").val(wdate);
+			// 좋아요 및 조회수
+			$("#likeAndCount").text(bbs.bbsLike + " / " + bbs.readcount);
+			if(bbs.bbsImage == null){
+				//$("#imgPosition").hide();
+				//$("#imgPosition").empty();
+				document.querySelector("#imgPosition").style.display="none";
+			}
+			// url을 통한 이미지 다운로드
+			if(bbs.bbsImage != null){
+				var imgArr = bbs.bbsImage.split(",");
+				var urlFront = "https://firebasestorage.googleapis.com/v0/b/healthapp-client.appspot.com/o/images%2F";
+				var urlBack = "?alt=media&token=df6804c5-5a28-44a9-a6b4-0a9e8df1589e";
+				$.each(imgArr, function(i, item){
+					let choiceImgArr = item.split("/");
+					let imgName = choiceImgArr[1];
+					
+					let str = '<li><img src="' + (urlFront + imgName + urlBack) + '" width="300px" height="300px" alt="" style="float:left;"></li>'
+									
+					$(".slides").append(str);
+				});
+				
+				slides = document.querySelector('.slides'); //전체 슬라이드 컨테이너 
+				slideImg = document.querySelectorAll('.slides li'); //모든 슬라이드들  
+				slideCount = slideImg.length; // 슬라이드 개수 
+				//전체 슬라이드 컨테이너 넓이 설정
+				slides.style.width = (slideWidth + slideMargin) * slideCount + 'px'; 
+			}
+			
+			
+			$("#content").text(bbs.content);
+			if(userInfo.id != bbs.id){
+				$("#updateBtn").hide();
+				$("#deleteBtn").hide();
+			}
+		},
+		error: function(){
+			alert('error');
+		}
+	});
 }
 
 // 해당 게시글의 댓글 가져오기
@@ -311,7 +355,8 @@ function deleteReply(seq){
 		return;
 	}
 }
- 
+
+// 이미지 슬라이드 작동 함수 및 이벤트
 const prev = document.querySelector('.prev'); //이전 버튼 
 const next = document.querySelector('.next'); //다음 버튼 
 const slideWidth = 500; //한개의 슬라이드 넓이 
@@ -333,6 +378,29 @@ next.addEventListener('click', function () {
 	//currentIdx !==slideCount - 1 일때만 moveSlide 함수 불러옴 
 	if (currentIdx !== slideCount - 1) { moveSlide(currentIdx + 1); } 
 });
+
+// 좋아요 취소기능 함수
+function likeCancel(){
+	$.ajax({
+		url: "http://localhost:3000/likeCountCancel_W",
+		type: "post",
+		data: {
+			"bbs_no": seq,
+			"user_id": userInfo.id
+		},
+		success: function(msg){
+			if(msg == "complete"){
+				alert('좋아요를 취소했습니다.');
+				getBbs();
+			}else{
+				alert('좋아요 취소 실패.\n다시시도해주세요.');
+			}
+		},
+		error: function(){
+			alert('error');
+		}
+	});
+}
  
 
 </script>
