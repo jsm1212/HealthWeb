@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+	<h2>게시글 디테일</h2>
+	<p id="seq"></p>
+	<p id="data"></p>
+	<script type="text/javascript">
+		const url = new URL(location.href);
+		const urlParams = url.searchParams;
+		let seq = urlParams.get("seq");
+		//alert(seq)
+		$("#seq").text(seq);
+		
+		$.ajax({
+			url:"http://localhost:3000/bbsDetail",
+			type:"get",
+			data:{seq:seq},
+			success:function(data){
+				let str = data.title + "\n" + data.content + "\n" + data.wdate
+				//alert(str)
+				$("#data").text(str)
+			},error:function(){
+				alert("error");
+			}
+		});
+	</script>
+</body>
+</html>

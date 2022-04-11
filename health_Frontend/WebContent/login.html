@@ -28,20 +28,21 @@ h1{
 <div id="app" class="d-flex justify-content-center shadow p-3 mb-5 bg-body rounded">
 	<form>
 		<h1>로그인</h1>
-	  <div class="mb-3">
-	    <label for="exampleInputId1" class="form-label">아이디</label>
-	    <input id="id" type="text" class="form-control" id="exampleInputEmail1"  placeholder="아이디 입력" autocomplete="false"/>
-	  </div>
-	  <div class="mb-3">
-	    <label for="exampleInputPassword1" class="form-label">비밀번호</label>
-	    <input id="pwd" type="password" class="form-control" id="exampleInputPassword1" placeholder="비밀번호 입력" autocomplete="false"/>
-	  </div>
-	  <div class="mb-3 form-check">
-		   <input id="autoSave" type="checkbox" class="form-check-input" />
-		   <label  class="form-check-label">자동 저장</label>
-	  </div>
-		  <button id="login" type="button" class="btn">로그인</button>
-		  <button id="regi" class="btn"  type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" role="button">회원가입</button>
+		<div class="mb-3">
+		  <label for="exampleInputId1" class="form-label">아이디</label>
+		  <input id="id" type="text" class="form-control" id="exampleInputEmail1"  placeholder="아이디 입력" autocomplete="false"/>
+		</div>
+		<div class="mb-3">
+		  <label for="exampleInputPassword1" class="form-label">비밀번호</label>
+		  <input id="pwd" type="password" class="form-control" id="exampleInputPassword1" placeholder="비밀번호 입력" autocomplete="false"/>
+		</div>
+		<div class="mb-3 form-check">
+		  <input id="autoSave" type="checkbox" class="form-check-input" />
+		  <label  class="form-check-label">자동 저장</label>
+		</div>
+		
+		<button id="login" type="button" class="btn">로그인</button>
+		<button id="regi" class="btn"  type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" role="button">회원가입</button>
 	</form>
 </div>
 
@@ -124,25 +125,33 @@ h1{
 <script type="text/javascript">
 
 $(document).ready(function(){
-	
-	
-	
-	$("#login").click(function(){
-		
+	$("#login").click(function(){		
 		$.ajax({
 			url: "http://localhost:3000/login",
 			type:"post",
 			data: { id:$("#id").val().trim(), pwd:$("#pwd").val().trim()},
 			success:function(data){
 				// alert('success');
+				//alert(JSON.stringify(data))
 				if(data == ""){
 					alert("id나 비밀번호를 확인하세요");
 					$("#id").val("");
 					$("#pwd").val("");
 				}else{
-					sessionStorage.setItem("login", JSON.stringify(data));// JSON data를 문자열로 변환해서 세션스토리지에 넣어줌
-					alert(data.name + " 님 환영합니다.");
-					location.href = "main.html";
+					if(data.auth == 1){
+						alert("관리자님 환영합니다.");
+						location.href = "memberList.html";
+					}else{
+						if(data.del != 1){
+							sessionStorage.setItem("login", JSON.stringify(data));// JSON data를 문자열로 변환해서 세션스토리지에 넣어줌
+							alert(data.name + "님 환영합니다.");
+							location.href = "mypage.html";
+						}else{
+							alert("이미 탈퇴한 회원입니다.");
+							$("#id").val("");
+							$("#pwd").val("");
+						}
+					}
 				}
 			},
 			error:function(){
