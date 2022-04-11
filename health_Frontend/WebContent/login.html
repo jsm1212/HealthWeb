@@ -6,12 +6,23 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+<script src="js/youtube.js"></script>
 <style>
-
+body{
+	background-color:#088A85;
+}
+.text_white{
+	color:#FFF;
+}
 #app{
+	background-color:#000;
+	color:#000000;
+	position:relative;
 	margin:auto;
 	margin-top:250px;
-	width:40%;
+	width:50%;
 	padding: 10px;
 }
 
@@ -20,33 +31,70 @@ h1{
 }
 
 .btn{
-	background-color:#A9F5D0;
+	background-color:#F00;
+	width: 100px;
 }
+
+.socialLogin{
+	width:155px;
+	height:38px;
+}
+
+#kakaoLogin:hover{
+	cursor:pointer;
+}
+
+#googleLogin:hover{
+	cursor:pointer;
+}
+
+#player{
+	width:100%;
+	height:100%;
+	margin:auto -50px;
+}
+
+#player:hover{
+
+}
+
+
 </style>
 </head>
 <body>
+    
+
+<section>
 <div id="app" class="d-flex justify-content-center shadow p-3 mb-5 bg-body rounded">
+<div class="youtube__area">
+      <div id="player"></div>
+</div>
 	<form>
-		<h1>로그인</h1>
+		<h1>Log in</h1>
 	  <div class="mb-3">
-	    <label for="exampleInputId1" class="form-label">아이디</label>
-	    <input id="id" type="text" class="form-control" id="exampleInputEmail1"  placeholder="아이디 입력" autocomplete="false"/>
+	    <label for="exampleInputId1" class="form-label">ID</label>
+	    <input id="id" type="text" class="form-control" id="exampleInputEmail1" autocomplete="false"/>
 	  </div>
 	  <div class="mb-3">
-	    <label for="exampleInputPassword1" class="form-label">비밀번호</label>
-	    <input id="pwd" type="password" class="form-control" id="exampleInputPassword1" placeholder="비밀번호 입력" autocomplete="false"/>
+	    <label for="exampleInputPassword1" class="form-label">Password</label>
+	    <input id="pwd" type="password" class="form-control" id="exampleInputPassword1" autocomplete="false"/>
 	  </div>
 	  <div class="mb-3 form-check">
 		   <input id="autoSave" type="checkbox" class="form-check-input" />
-		   <label  class="form-check-label">자동 저장</label>
+		   <label  class="form-check-label">자동 로그인</label>
 	  </div>
-		  <button id="login" type="button" class="btn">로그인</button>
-		  <button id="regi" class="btn"  type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" role="button">회원가입</button>
+		  <button id="login" type="button" class="btn text-light">로그인</button>
+		  <button id="regi" class="btn text-light"  type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" role="button">회원가입</button>
 	</form>
 </div>
+<div class="d-flex justify-content-center">
+		<img src="images/kakao_login_medium_narrow.png" id="kakaoLogin" class="socialLogin">
+		<img src="images/btn_google_signin_light_normal_web.png" id="googleLogin" class="socialLogin">
+</div>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+
+<div class="modal fade" id="exampleModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">회원가입</h5>
@@ -58,7 +106,7 @@ h1{
 		<label class="form-label">아이디</label>
 			<div class="d-flex">
 				<input type="text" id="userid" class="form-control" placeholder="아이디입력" size="10">
-				<button class="btn" type="button" id="idCheckBtn">중복확인</button>
+				<button class="btn text-light" type="button" id="idCheckBtn">확인</button>
 			</div>
 			<div class="form-text"><p id="idcheck" style="color:#00F;">아이디를 입력해주세요</p></div>
 	</div>
@@ -70,12 +118,12 @@ h1{
 	
 	<div class="mb-3">
 		<label class="form-label">비밀번호</label>
-		<input type="password" id="regiPwd" name="regiPwd" class="form-control" placeholder="비밀번호 입력">
+		<input type="password" id="regiPwd" name="regiPwd" class="form-control" placeholder="문자, 숫자, 특수문자를 포함하여 8자 이상만 가능합니다.">
 	</div>
 	
 	<div class="mb-3">
 		<label class="form-label">비밀번호 확인</label>
-		<input type="password" id="pwdCheck" name="pwdCheck" class="form-control" placeholder="비밀번호 재입력">
+		<input type="password" id="pwdCheck" name="pwdCheck" class="form-control" placeholder="문자, 숫자, 특수문자를 포함하여 8자 이상만 가능합니다.">
 	</div>
 	
 	<div class="mb-3">
@@ -85,13 +133,16 @@ h1{
 	
 	<div class="mb-3">
 		<label class="form-label">닉네임</label>
-		<input type="text" id="nickname" name="nickname" class="form-control" placeholder="닉네임 입력">
+			<div class="d-flex">
+				<input type="text" id="nickname" name="nickname" class="form-control" placeholder="특수문자를 제외한 2~8자리만 가능합니다.">
+				<button class="btn text-light" type="button" id="nicknameCheckBtn">확인</button>
+			</div>
+			<div class="form-text"><p id="nicknameCheck" style="color:#00F;">닉네임을 입력해주세요</p></div>
 	</div>
 	
 	<div class="mb-3">
 	<label class="form-label">성별</label>
 		<select id="genderSelect" class="form-select" aria-label="Default select example">
-  			<option selected>성별</option>
   			<option value="1">남자</option>
   			<option value="2">여자</option>
 		</select>
@@ -99,41 +150,53 @@ h1{
 	
 	<div class="mb-3">
 		<label class="form-label">나이</label>
-		<input type="number" id="age" name="age" class="form-control" placeholder="나이 입력">
+		<input type="number" id="age" name="age" class="form-control" placeholder="나이 입력" min=0 max=100 value=1 oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
 	</div>
 	
 	<div class="mb-3">
 		<label class="form-label">이메일</label>
-		<input type="email" id="email" name="email" class="form-control" placeholder="이메일 입력">
+			<div class="d-flex">
+				<input type="email" id="email" name="email" class="form-control" placeholder="이메일 입력">
+				<button class="btn text-light" type="button" id="emailCheckBtn">확인</button>
+			</div>
+			<div class="form-text"><p id="emailCheck" style="color:#00F;">이메일을 입력해주세요</p></div>
 	</div>
 	
 	<div class="mb-3">
 		<label class="form-label">전화번호</label>
-		<input type="tel" id="tel" name="tel" class="form-control" placeholder="나이 입력">
+		<input type="tel" id="tel" name="tel" class="form-control" placeholder="전화번호 입력">
 	</div>
 	
       </div>
       <div class="modal-footer">
-        <button id="account" type="button" class="btn">가입하기</button>
-         <button type="button" class="btn" data-bs-dismiss="modal">취소</button>
+        <button id="account" type="button" class="btn text-light">가입하기</button>
+         <button type="button" class="btn text-light" data-bs-dismiss="modal">취소</button>
       </div>
     </div>
   </div>
 </div>
+</section>
+
 </body>
 <script type="text/javascript">
 
 $(document).ready(function(){
 	
+	var nicknameCheckFlag = false;
+	var emailCheckFlag = false;
 	
-	
-	$("#login").click(function(){
+	// 자동로그인활성시 메인페이지로 바로 이동
+	if(localStorage.getItem("login")!=null){
+		location.href = "main.html";
+	}
+	// 로그인
+	$("#login").click(()=>{
 		
 		$.ajax({
 			url: "http://localhost:3000/login",
 			type:"post",
 			data: { id:$("#id").val().trim(), pwd:$("#pwd").val().trim()},
-			success:function(data){
+			success:(data)=>{
 				// alert('success');
 				if(data == ""){
 					alert("id나 비밀번호를 확인하세요");
@@ -143,35 +206,35 @@ $(document).ready(function(){
 					sessionStorage.setItem("login", JSON.stringify(data));// JSON data를 문자열로 변환해서 세션스토리지에 넣어줌
 					alert(data.name + " 님 환영합니다.");
 					location.href = "main.html";
+					
+					if($("#autoSave").is(":checked")){
+						alert("체크");
+						localStorage.setItem("login", JSON.stringify(data));
+					}else{
+						alert("체크 해제");
+						localStorage.clear();
+					}
 				}
 			},
-			error:function(){
+			error:()=>{
 				alert('error');
 			}
 		});
 	});
 	
-	$("#autoSave").change(function(){
-		if($("#autoSave").is(":checked")){
-			alert("체크");
-		}else{
-			alert("체크 해제");
-		}
-	});
-	
 });
 
-$("#idCheckBtn").click(function () { // 중복체크를 위한 버튼을 클릭하면
+// 아이디 중복 체크
+$("#idCheckBtn").click(()=> { // 중복체크를 위한 버튼을 클릭하면
 	
 	if( $("#userid").val().trim() !=""){
 	$.ajax({
 		url:"http://localhost:3000/getId", // 서버에서 getId 호출
 		type:"post", // post 타입으로
 		data:{ "id":$("#userid").val().trim() }, // 갖고갈 데이터는 id : 사용자가 입력한 id값
-		success:function( msg ){ // 성공하면 메세지 뿌린다.
-			//alert('success');
-			//alert(msg);
-	
+		success:( msg )=>{ // 성공하면 메세지 뿌린다.
+			
+			if(idCheck()==true){
 			if(msg.trim() == 'y'){ // getId 에 return값이 OK면 사용가능
 				$("#idcheck").html("이 아이디는 사용할 수 있습니다");
 				$("#regiId").val( $("#userid").val() ) // readOnly상태의 id에 사용자가 입력한 id를 뿌려준다.
@@ -180,8 +243,11 @@ $("#idCheckBtn").click(function () { // 중복체크를 위한 버튼을 클릭�
 				$("#userid").val(""); // 사용자가 입력한 ID값 초기화
 				$("#userid").focus(); 
 			}
+			}else{
+				alert("아이디는 숫자,영문자만 가능합니다.")
+			}
 		},
-		error:function(){
+		error:()=>{
 			alert('error');
 		}
 	});	
@@ -191,45 +257,295 @@ $("#idCheckBtn").click(function () { // 중복체크를 위한 버튼을 클릭�
 });
 
 let gender = ""
-	$("#genderSelect").change(function(){
+	$("#genderSelect").change(()=>{
 		gender = $("#genderSelect option:selected").text()
-		// console.log(gender)
 	});
 
-$("#account").on("click", function () {		
+
+// 회원가입
+$("#account").on("click", ()=>{		
 	
 	
-	let params = { id:$("#regiId").val(), pwd:$("#regiPwd").val(), name:$("#name").val(), nickname:$("#nickname").val(), gender: gender, age:$("#age").val(), email:$("#email").val(), tel:$("#tel").val() };
-	if( $("#pwdCheck").val().trim() == $("#regiPwd").val().trim()){
+	let params = { id:$("#regiId").val(), pwd:$("#regiPwd").val(), name:$("#name").val(), nickname:$("#nickname").val(), gender: gender, age:$("#age").val(), email:$("#email").val(), tel:$("#tel").val(), auth:3, trainer:"", del:0};
+	if(idCheck()==false){
+		alert("아이디를 다시 확인해주세요.")
+	}else if(pwdCheckFunc()==false){
+		alert("비밀번호를 다시 확인해주세요.")
+	}else if($("#name").val().trim()==""){
+		alert("이름을 다시 확인해주세요")
+	}
+	else if(nicknameCheckFunc()==false){
+		alert("닉네임을 다시 확인해주세요.")
+	}else{
+	if(pwdCheckFunc()==true){
 	$.ajax({
 		url:"http://localhost:3000/register",
 		type:"post",
 		data:params,
-		success:function(data){
+		success:(data)=>{
 			//alert("success");
 			if(data == "y"){
-				alert('가입성공');
+				alert('가입이 완료되었습니다. 로그인해주세요.');
 				location.href = "login.html";
 			}else{
 				alert(data);
 			}
 		},
-		error:function(){
+		error:()=>{
 			alert("error");
 		}
 	});
 	}else{
-		alert("비밀번호가 다릅니다.");
+		alert("비밀번호가 다르거나 형식이 올바르지않습니다.");
+	}
 	}
 	
 });
+	
+//닉네임 중복체크
+ const nicknameCheckFunc = () => {
+	const nicknameRegex = /^[ㄱ-ㅎ가-힣a-z0-9-_]{2,8}$/;
+	
+	if(nicknameRegex.test($("#nickname").val())){
+	$.ajax({
+		url:"http://localhost:3000/checkNickname",
+		type:"post",
+		data:{"nickname":$("#nickname").val().trim()},
+		success:(msg)=>{
+			if(msg == "y"){
+				$("#nicknameCheck").html("이 닉네임은 사용할 수 있습니다.").css("color","#00F");
+				nicknameCheckFlag = true;
+			}else{
+				$("#nicknameCheck").html("이 닉네임은 이미 사용 중입니다.").css("color","#F00");
+			}
+		},
+		error:()=>{
+			alert("닉네임 중복체크 에러");
+		}
+	})
+	return true;
+	}else{
+	return false;
+	}
+}; 
 
-var regi = document.querySelector('regi')
-var userId = document.querySelector('userid')
+//이메일 중복체크
+const emailCheckFunc = () => {
+	
+	$.ajax({
+		url:"http://localhost:3000/checkEmail",
+		type:"post",
+		data:{"email":$("#email").val().trim()},
+		success:(msg)=>{
+			if(msg == "y"){
+				$("#emailCheck").html("이 이메일은 사용할 수 있습니다.").css("color","#00F");
+				emailCheckFlag = true;
+			}else{
+				$("#emailCheck").html("이 이메일은 이미 사용 중 입니다.").css("color","#F00");
+			}
+		},
+		error:()=>{
+			alert("이메일 중복체크 에러");
+		}
+	})
+};
+//아이디 유효성 검사
+const idCheck = () => {
+	const idRegex = /^[0-9a-z]+$/;
+	
+	if(idRegex.test($("#userid").val())){
+		return true;
+	}else{
+		return false;
+	}
+}
+//클릭시 닉네임 유효성 검사
+$("#nicknameCheckBtn").click(()=>{
+	const nicknameRegex = /^[ㄱ-ㅎ가-힣a-z0-9-_]{2,8}$/;
+	
+	nicknameCheckFlag = false;
+	if(nicknameRegex.test($("#nickname").val()) ){
+	nicknameCheckFunc();
+	}else{
+		alert("닉네임은 특수문자를 제외한 2~8자리만 가능합니다.")
+		$("#nicknameCheck").html("닉네임은 특수문자를 제외한 2~8자리만 가능합니다.").css("color","#F00")
+		nicknameCheckFlag = false;
+	}
+});
 
-regi.addEventListener('shown.bs.modal', function(){
+// 닉네임 유효성 검사
+const nicknameCheck = () => {
+	const nicknameRegex = /^[ㄱ-ㅎ가-힣a-z0-9-_]{2,8}$/;
+	
+	nicknameCheckFlag = false;
+	if(nicknameRegex.test($("#nickname").val()) ){
+		return true;
+	}else{
+		return false;
+	}
+}
+// 이메일 유효성 검사
+$("#emailCheckBtn").click(()=>{
+	const emailRegex = /^(?:\w+\.?)*\w+@(?:\w+\.)+\w+$/;
+	
+	emailCheckFlag = false;
+	if(emailRegex.test($("#email").val())){
+	emailCheckFunc();
+	}else{
+		alert("이메일 형식이 올바르지 않습니다.")
+		$("#emailCheck").html("이메일 형식이 올바르지 않습니다.").css("color","#F00")
+		emailCheckFlag = false;
+	}
+});
+
+// 비밀번호 유효성 검사
+const pwdCheckFunc = () => {
+	
+	 const pwdRegex = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@$!%*#?&]).{8,}.$/;
+	 if($("#pwdCheck").val().trim() == $("#regiPwd").val().trim()){
+		 if(pwdRegex.test($("#pwdCheck").val().trim())){
+			 return true
+		 }else{
+			 return false
+			 alert("비밀번호 형식이 올바르지 않습니다.")
+		 }
+	 }
+};
+
+// 휴대폰 번호 유효성 검사
+const telCheckFunc = () => {
+	
+	const telRegex = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
+	
+	if(tealRegex.test($("#tel").val().trim())){
+		return true
+	}else{
+		return false
+		alert("전화번호 형식이 올바르지 않습니다.")
+	}
+};
+
+
+// 카카오 로그인
+Kakao.init('33dac5c74d9c68aa75bc31a1474ec6cd');
+
+$("#kakaoLogin").click(()=>{
+	Kakao.Auth.login({
+		success: (res)=>{
+			Kakao.API.request({
+				url: '/v2/user/me',
+				success: (res)=>{
+					let kakaoIdtoken = res.id
+					let kakaoNickname = res.kakao_account.profile.nickname
+					let kakaoEmail = res.kakao_account.email
+					
+					socialLogin(kakaoIdtoken,kakaoIdtoken,kakaoNickname,kakaoNickname," ",0,kakaoEmail," ",4,""," ",0);
+					
+				},
+				fail: (err)=>{
+					console.log(err)
+				}
+			})
+		},
+		fail:(err)=>{
+			console.log(err)
+		}
+	})
+});
+
+//구글 로그인
+$("#googleLogin").click(()=>{
+	let firebaseConfig = {
+	    apiKey: "AIzaSyBf-7zB4MCZOc-48Xsxt2cyOTCRDfI80aw",
+	    authDomain: "healthapp-client.firebaseapp.com",
+	    projectId: "healthapp-client",
+	    storageBucket: "healthapp-client.appspot.com",
+	    messagingSenderId: "1011601613020",
+	    appId: "1:1011601613020:web:2a87e02a1e4b21e2d0d419",
+	    measurementId: "G-T99K3V7HCQ"
+	  };
+
+	// Initialize Firebase
+	firebase.initializeApp(firebaseConfig);
+	let provider = new firebase.auth.GoogleAuthProvider();
+
+	firebase.auth().signInWithPopup(provider).then((result)=>{
+		let token = result.credential.accessToken;
+		let user = result.user;
+		let googleName = user.displayName;
+		let googleEmail = user.email;
+		let googleUID = user.uid
+		
+		socialLogin(googleUID,googleUID,googleName,googleName," ",0,googleEmail," ",5,"","",0);
+	}).catch((err)=>{
+		let errorCode = err.code;
+		let errorMessage = err.message;
+		let email = err.email;
+		let credential = err.credential;
+	})
+	
+});
+
+
+
+// 소셜로그인에 공통적으로 적용되는 함수
+const socialLogin = (id,pwd,name,nickname,gender,age,email,tel,auth,regidate,trainer,del) =>{
+	
+	let params = {id:id, pwd:pwd, name:name, nickname:nickname, gender:gender, age:age, email:email, tel:tel, auth:auth, regidate:regidate, trainer:trainer, del:del}
+	$.ajax({
+		url:"http://localhost:3000/getId", // 서버에서 getId 호출
+		type:"post", // post 타입으로
+		data:{ "id":id }, // 갖고갈 데이터는 id : 사용자가 입력한 id값
+		success:( msg )=>{ // 성공하면 메세지 뿌린다.
+			//alert('success');
+			//alert(msg);
+			if(msg.trim() == 'y'){
+					$.ajax({
+						url:"http://localhost:3000/register",
+						type:"post",
+						data: params,
+						success:(data)=>{
+							if(data == "y"){
+								sessionStorage.setItem("login", JSON.stringify(params));
+								alert(login.name + "님 환영합니다.");
+								location.href = "main.html";
+							}else{
+								alert(data);
+							}
+						},
+						error:()=>{
+							alert("error");
+						}
+					});
+			}else{ 
+				$.ajax({
+					url: "http://localhost:3000/login",
+					type:"post",
+					data: { id:id, pwd:pwd},
+					success:(data)=>{
+						sessionStorage.setItem("login", JSON.stringify(data));// JSON data를 문자열로 변환해서 세션스토리지에 넣어줌
+						alert(data.name + " 님 환영합니다.");
+						location.href = "main.html";
+					},
+					error:()=>{
+						alert('error'+data);
+					}
+				});
+			}
+		},
+		error:()=>{
+			alert('error');
+		}
+	});	
+};
+
+
+let regi = document.querySelector('regi')
+let userId = document.querySelector('userid')
+
+regi.addEventListener('shown.bs.modal', ()=>{
 	userId.focus()
-})
+});
 
 </script>
 </html>
