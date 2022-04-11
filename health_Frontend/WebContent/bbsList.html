@@ -2,50 +2,198 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
-<script type="text/javascript" src="./jquery/jquery.twbsPagination.min.js"></script>
+<title>나홀로GYM에 커뮤니티</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link rel="shortcut icon" type="image⁄x-icon" href="https://firebasestorage.googleapis.com/v0/b/healthapp-client.appspot.com/o/images%2Fhome.png?alt=media&token=c30ebcc4-6ca5-4745-a01e-ecaf8e97d972">
 <link href="css/bbsList.css" rel="stylesheet" />
+<script type="text/javascript" src="./jquery/jquery.twbsPagination.min.js"></script>
 </head>
 <body>
 <div class="contentCenterPosition">
 	<div id="mainFrame">
-			<div class="contentCenterPosition">
-				<div>
-					<select>
-						<option selected>선택</option>
-						<option>제목</option>
-						<option>내용</option>
-						<option>작성자</option>
-					</select>
-				</div>
-				<div>
-					<input type="text" placeholder="검색어를 입력해주세요">
-				</div>
-				<div>
-					<button type="button">검색</button>
-				</div>
-			</div>
-			
+		<div class="contentCenterPosition">
 			<div>
-				<div class="contentCenterPosition">
-					<div class="standardListNumber">번호</div>
-					<div class="standardListTitle">제목</div>
-					<div class="standardListWDate">작성일</div>
-					<div class="standardListWriter">작성자</div>
-				</div>
-				<div id="bbsList" class="contentCenterPosition">
-					<div class="listNumber">1</div>
-					<div class="listTitle"><a href="">테스트용 게시글 제목입니다</a></div>
-					<div class="listWDate">2022-04-01 19:33</div>
-					<div class="listWriter">앙꼬</div>
-				</div>
-				
+				<select id="_choice" name="choice">
+					<option selected>선택</option>
+					<option value="title">제목</option>
+					<option value="content">내용</option>
+					<option value="writer">작성자</option>
+				</select>
+			</div>
+			<div>
+				<input type="text" placeholder="검색어를 입력해주세요" id="_search" name="search">
+			</div>
+			<div>
+				<button type="button" id="btnSearch">검색</button>
+			</div>
+		</div>
+		
+		<div>
+			<div class="contentCenterPosition">
+				<div class="standardListNumber">번호</div>
+				<div class="standardListTitle">제목</div>
+				<div class="standardListWDate">작성일</div>
+				<div class="standardListWriter">작성자</div>
+			</div>
+			<div id="bbsList">
 			</div>
 			
-			<button>글쓰기</button>
-			
+		</div>
+		
+		<div class="contentCenterPosition">
+			<div>
+				<ul id="pagination"></ul>
+			</div>			
+		</div>
+		
+		<div class="contentCenterPosition">
+			<div>
+				<button type="button" id="writeBbsBtn">글쓰기</button>
+			</div>
+		</div>
+		
 	</div>
 </div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	let str = sessionStorage.getItem("login");
+	let userInfo = JSON.parse(str);
+	
+	getBbsList(0);
+	getBbsCount();
+	
+	// 글쓰기 버튼 클릭 이벤트
+	$("#writeBbsBtn").click(function(){
+		location.href = "bbsWrite.html";
+	});
+	
+	// 검색버튼 클릭 이벤트
+	$("#btnSearch").click(function(){
+		getBbsList(0);
+		getBbsCount();		
+	});
+	
+})
+
+// 게시판 리스트 불러오기
+function getBbsList( page ) {
+	
+	let choice = $("#_choice").val();
+	let search = $("#_search").val();
+	
+	$("#bbsList").html(""); // 테이블 초기화
+	
+	$.ajax({
+		url:"http://localhost:3000/getBbsListSearchPage",
+		type:"get",
+		data:{"choice":choice, "search":search, "page": page},
+		success:function(list){
+			$.each(list, function(i, item){
+				
+				let str = "";
+				// 작성된 게시글이 있을때
+				if(item != null){
+					
+					// 게시글 번호
+					str = '<div class="contentCenterPosition"><div class="listNumber">' + (i + 1) + '</div>';
+					
+					// 게시글 제목
+					if(item.del == 0){
+						str += '<div class="listTitle"><a href="bbsDetail.html?seq=' + item.seq + '">' + item.title + '</a></div>';
+					}
+					else if(item.del == 2){
+						str += '<div class="listTitle">이 글은 관리자에 의해 삭제되었습니다.</div>';
+					}
+					
+					// 작성일
+					str += '<div class="listWDate">' + item.wdate + '</div>';
+					
+					// 작성자
+					str += '<div class="listWriter">' + item.nickname + '</div></div>';
+					
+				}else{
+					
+					str += '<div class="contentCenterPosition"><div id="nonList">작성된 글이 없습니다.</div></div>'
+				}
+				
+				$("#bbsList").append(str);
+			});
+		},
+		error:function(){
+			alert('게시글 리스트 : error');
+		}
+	});
+}
+
+
+//글의 총수를 취득
+function getBbsCount() {
+	let choice = $("#_choice").val();
+	let search = $("#_search").val();
+	
+	$.ajax({
+		url:"http://localhost:3000/getBbsCount",
+		type:"get",
+		data:{ "choice":choice, "search":search, "page":0 },
+		success:function(count){
+			//alert(count);
+			loadPage(count);
+		},
+		error:function(){
+			alert('getBbsCount error');
+		}		
+	});	
+}
+
+
+function loadPage( totalCount ) { // 글의 총수		 
+	let pageSize = 10;		
+	
+	let _totalPages = totalCount / 10 // 10 10 3
+	if(totalCount % 10 > 0){
+		_totalPages++;
+	}
+	
+	$('#pagination').twbsPagination('destroy');	// 페이지 갱신
+	
+	$('#pagination').twbsPagination({		
+	    totalPages: _totalPages,
+	    visiblePages: 10,
+	    first:'<span sris-hidden="true">«</span>',
+	    last:'<span sris-hidden="true">»</span>',
+	    prev:"이전",
+	    next:"다음",
+	    initiateStartPageClick:false,	// onPageClick 자동호출 방지
+	    onPageClick: function (event, page) {
+	        // alert(page);
+	        getBbsList( page - 1 );
+	    }
+	})
+}
+
+</script>
+
+
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

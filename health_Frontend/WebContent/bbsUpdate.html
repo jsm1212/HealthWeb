@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>나홀로GYM에 게시글 수정</title>
+<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link rel="shortcut icon" type="image⁄x-icon" href="https://firebasestorage.googleapis.com/v0/b/healthapp-client.appspot.com/o/images%2Fhome.png?alt=media&token=c30ebcc4-6ca5-4745-a01e-ecaf8e97d972">
+<link href="css/bbsUpdate.css" rel="stylesheet" />
+</head>
+<body>
+
+
+
+
+
+<script src="https://www.gstatic.com/firebasejs/4.3.0/firebase.js"></script>
+<script type="text/javascript">
+//sessionStorage에서 가져온 로그인 정보
+let str = sessionStorage.getItem("login");
+// 가져온 로그인정보를 json형태로 변환
+let userInfo = JSON.parse(str);
+
+//파이어베이스 이미지 업로드
+const firebaseConfig = {
+	  apiKey: "AIzaSyBf-7zB4MCZOc-48Xsxt2cyOTCRDfI80aw",
+	  authDomain: "healthapp-client.firebaseapp.com",
+	  projectId: "healthapp-client",
+	  storageBucket: "healthapp-client.appspot.com",
+	  messagingSenderId: "1011601613020",
+	  appId: "1:1011601613020:web:2a87e02a1e4b21e2d0d419",
+	  measurementId: "G-T99K3V7HCQ"
+};
+  
+firebase.initializeApp(firebaseConfig);
+const storage = firebase.storage();
+
+</script>
+
+</body>
+</html>

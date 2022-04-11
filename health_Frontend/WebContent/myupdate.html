@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<style>
+	.app{margin:auto; margin-top:50px;
+		 width:90%; padding: 10px;}
+	.btn{background-color:#A9F5D0;}
+	.span{border-radius: 10px 0 0 10px; background-color:#ff000000; width: 100px; justify-content: center;}
+	.span2{border-radius: 0 10px 10px;}
+	.pwdspan{border-radius: 10px 0 0 10px; background-color: #ff000000; width: 150px; justify-content: center;}
+	.input-group{width: 60%}
+</style>
+</head>
+<body>
+	<div class="app justify-content-center shadow p-3 mb-5 bg-body rounded">
+		<h1 align="center">정보 수정</h1><br>
+		
+		<div align="center">
+			<div class="input-group mb-3">
+			  <span class="input-group-text span">닉네임</span>
+			  <input class="form-control span2" id="nickname">
+			</div>
+						
+			<div class="input-group mb-3">
+			  <span class="input-group-text span">이메일</span>
+			  <input class="form-control span2" id="email">
+			  <button type="button" class="btn span2" id="emailsend">확인</button>
+			</div>
+			<div id="ewindow">
+				<div class="input-group mb-3">
+				  <span class="input-group-text span">인증번호</span>
+				  <input class="form-control span2" id="emailNum">
+				  <button type="button" class="btn span2" id="emailok">확인</button>
+				</div>
+			</div>
+			
+			<div class="input-group mb-3">
+			  <span class="input-group-text span">전화번호</span>
+			  <input class="form-control span2" id="tel">
+			  <button type="button" class="btn span2" id="telsend">확인</button>
+			</div>
+			<div id="twindow">
+				<div class="input-group mb-3">
+				  <span class="input-group-text span">인증번호</span>
+				  <input class="form-control span2" id="telNum">
+				  <button type="button" class="btn span2" id="telok">확인</button>
+				</div>
+			</div>
+		</div>
+		
+		<div align="center">
+			<button type="button" class="btn" id="pwdchange">비밀번호 변경</button>
+			<button type="button" class="btn" id="ok">완료</button>
+		</div>
+	</div>
+	
+	<div id="pcwindow" class="app justify-content-center shadow p-3 mb-5 bg-body rounded">
+		<h1 align="center">비밀번호 변경</h1><br>
+		
+		<div align="center">
+			<div class="input-group mb-3">
+			  <span class="input-group-text pwdspan">현재 비밀번호</span>
+			  <input class="form-control span2" id="nowpwd" type="password">
+			</div>
+						
+			<div class="input-group mb-3">
+			  <span class="input-group-text pwdspan">새 비밀번호</span>
+			  <input class="form-control span2" id="newpwd" type="password">
+			</div>
+			
+			<div class="input-group mb-3">
+			  <span class="input-group-text pwdspan">새 비밀번호 확인</span>
+			  <input class="form-control span2" id="newpwd2" type="password">
+			</div>
+			
+			<div align="center">
+				<button type="button" class="btn" id="pwdok">완료</button>
+			</div>
+		</div>
+	</div>
+	
+	<div align="center">
+		<button type="button" class="btn" id="delete">회원 탈퇴</button>
+	</div>
+	
+	<script type="text/javascript">
+		let login = sessionStorage.getItem("login");
+		let id = JSON.parse(login).id
+		let pwd = JSON.parse(login).pwd
+		
+		let code = "";
+
+		// 창 숨기기
+		document.getElementById('pcwindow').style.display = 'none';
+		document.getElementById('ewindow').style.display = 'none';
+		document.getElementById('twindow').style.display = 'none';
+		
+		// 정보 불러오기
+		$(document).ready(function(){
+			$.ajax({
+				url:"http://localhost:3000/getInformation",
+				type:"post",
+				data:{id:id},
+				success:function(data){					
+					$("#name").val(data.name);
+					$("#nickname").val(data.nickname);
+					$("#gender").val(data.gender);
+					$("#age").val(data.age);
+					$("#email").val(data.email);
+					$("#tel").val(data.tel);
+					$("#regidate").val(data.regidate.substring(0, 10));
+				},error:function(){
+					alert("error")
+				}
+			});
+		});
+		
+		// 이메일 인증번호 전송
+		$("#emailsend").click(function(){
+			if($("#email").val().trim() == ""){
+				alert("이메일을 입력하세요");
+			}else{
+				document.getElementById('ewindow').style.display = 'block';
+				
+				$.ajax({
+					url:"http://localhost:3000/sendEmail",
+					type:"post",
+					data:{email:$("#email").val().trim()},
+					success:function(num){
+						if(num > 0){ // 회원O
+							alert("인증번호가 전송되었습니다");
+							code = num;
+						} else{		   // 회원X
+							alert("이메일 정보가 없습니다");
+							$("#email").val("");
+						}
+					}, error:function(){
+						alert("error");
+					}
+				});
+			}
+		});
+		
+		// 이메일 인증번호 확인
+		$("#emailok").click(function(){
+			if($("#emailNum").val().trim() == "" || $("#emailNum").val().trim() != code){
+				alert("인증번호를 정확하게 입력하세요");
+				$("#inputCode").val("");
+			} else{
+				alert("이메일 인증 완료")
+			}
+		});
+		
+		// 전화번호 인증
+		$("#telsend").click(function(){
+			document.getElementById('twindow').style.display = 'block';
+		});
+		
+		// 비밀번호 변경 창 나타내기
+		$("#pwdchange").click(function(){
+			document.getElementById('pcwindow').style.display = 'block';
+		});
+		
+		// 비밀번호 변경
+		$("#pwdok").click(function(){
+			if(pwd != $("#nowpwd").val().trim()){
+				alert("현재 비밀번호를 다시 입력해주세요.");
+				$("#nowpwd").val("");
+			}else if($("#newpwd").val().trim() == "" || $("#newpwd2").val().trim() == ""){
+				alert("새 비밀번호를 입력해주세요.");
+			}else{
+				$.ajax({
+					url:"http://localhost:3000/updatePwd",
+					type:"post",
+					data:{id:id, pwd:$("#newpwd2").val().trim()},
+					success:function(msg){
+						if(msg == "yes"){
+							alert("수정 완료");
+							location.href = "mypage.html";
+						}else{
+							alert("수정 실패");
+						}
+					},error:function(){
+						alert("error")
+					}
+				});
+			}
+		});
+		
+		// 정보 수정
+		$("#ok").click(function(){
+			$.ajax({
+				url:"http://localhost:3000/updateMember",
+				type:"post",
+				data:{id:id, nickname:$("#nickname").val().trim(), email:$("#email").val().trim(), tel:$("#tel").val().trim()},
+				success:function(msg){
+					if(msg == "yes"){
+						alert("수정 완료");
+						location.href = "mypage.html";
+					}else{
+						alert("수정 실패");
+					}
+				},error:function(){
+					alert("error")
+				}
+			});
+		});
+		
+		// 회원 탈퇴
+		$("#delete").click(function(){
+			if(confirm("탈퇴 후 모든 정보가 삭제됩니다.\n그래도 진행하시겠습니까?")) {
+				$.ajax({
+					url:"http://localhost:3000/deleteMember",
+					type:"post",
+					data:id, //{"id":id}
+					success:function(msg){
+						if(msg == "yes"){
+							alert("회원 탈퇴");
+							sessionStorage.clear();
+							location.href = "index.html";
+						}else{
+							alert("탈퇴 실패");
+						}
+					},error:function(){
+						alert("error")
+					}
+				});
+			}
+			else {
+				return false;
+			}
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>나홀로GYM에 글쓰기</title>
+<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link rel="shortcut icon" type="image⁄x-icon" href="https://firebasestorage.googleapis.com/v0/b/healthapp-client.appspot.com/o/images%2Fhome.png?alt=media&token=c30ebcc4-6ca5-4745-a01e-ecaf8e97d972">
+<link href="css/bbsWrite.css?afters" rel="stylesheet" />
+</head>
+<body>
+
+<form id="form">
+	<div class="contentCenterPosition">
+		<div id="mainFrame">
+		
+			<div class="Horizontal">
+				<input type="hidden" id="id" name="id">
+				<input type="hidden" id="nickname" name="nickname">
+				<div id="standardTitle">제목</div>
+				<div id="inputTitle">
+					<input type="text" id="title" name="title" placeholder="제목을 입력하세요.">
+				</div>
+			</div>
+			
+			<div>
+				
+				<div id="horizonBetween">
+				
+					<div class="leftMargin">
+						이미지는 최대 5개까지 업로드가 가능합니다. 첨부하기 버튼을 눌러가 사진이 업로드 됩니다.
+					</div>
+					
+					<div class="rightMargin">
+						<input type="file" id="fileSelect" onchange="addFile(this);" multiple>
+						<button type="button" id="fileSubmit">첨부하기</button>
+					</div>
+					
+				</div>
+				
+			</div>
+			
+			<div>
+				<div id="contentStyle">
+					<textarea name="content" placeholder="내용을 입력하세요." onkeydown="resize(this)" onkeyup="resize(this)"></textarea>
+					<input type="hidden" id="bbsImage" name="bbsImage">
+				</div>
+			</div>
+			
+			
+			<div id="buttonZone">
+				<div>
+					<button type="button" id="goToList">목록으로</button>
+				</div>
+				
+				<div>
+					<button type="button" id="writeBtn">등록하기</button>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</form>
+<script src="https://www.gstatic.com/firebasejs/4.3.0/firebase.js"></script>
+<script type="text/javascript">
+//sessionStorage에서 가져온 로그인 정보
+let str = sessionStorage.getItem("login");
+// 가져온 로그인정보를 json형태로 변환
+let userInfo = JSON.parse(str);
+// 선택된 이미지파일 이름이 담긴 배열
+var imgArr = [];
+var newImgArr = [];
+// 선택된 파일 갯수
+var fileCount = 0;
+/* 첨부파일 추가 */
+function addFile(obj){
+    var maxFileCnt = 5+1;   // 첨부파일 최대 개수
+    var attFileCnt = document.querySelectorAll('#fileSelect').length;    // 기존 추가된 첨부파일 개수
+    var remainFileCnt = maxFileCnt - attFileCnt;    // 추가로 첨부가능한 개수
+    var curFileCnt = obj.files.length;  // 현재 선택된 첨부파일 개수
+
+    // 첨부파일 개수 확인
+    if (curFileCnt > remainFileCnt) {
+        alert("첨부파일은 최대 " + (maxFileCnt-1) + "개 까지 첨부 가능합니다.");
+     	// 초기화
+	    document.querySelector("input[type=file]").value = "";
+    } 
+    
+}
+
+function loading(index) {
+	const loadingImg = "https://firebasestorage.googleapis.com/v0/b/healthapp-client.appspot.com/o/images%2Floading.gif?alt=media&token=f1b4e573-1a1e-4fde-8fe3-f11d2a3c890c"
+    LoadingWithMask(loadingImg);
+    setTimeout("closeLoadingWithMask()", (index*1000));
+}
+ 
+function LoadingWithMask(gif) {
+    //화면의 높이와 너비를 구합니다.
+    var maskHeight = $(document).height();
+    var maskWidth  = window.document.body.clientWidth;
+     
+    //화면에 출력할 마스크를 설정해줍니다.
+    var mask       ="<div id='mask' style='position:absolute; z-index:9000; background-color:#000000; display:none; left:0; top:0;'></div>";
+    var loadingImg ='';
+      
+    loadingImg +=" <img src='"+ gif +"' style='position: absolute; display: block; margin: 0px auto; width: 100px; height: 100px'/>";
+ 
+    //화면에 레이어 추가
+    $('body')
+        .append(mask)
+ 
+    //마스크의 높이와 너비를 화면 것으로 만들어 전체 화면을 채웁니다.
+    $('#mask').css({
+            'width' : maskWidth,
+            'height': maskHeight,
+            'opacity' :'0.3'
+    });
+  
+    //마스크 표시
+    $('#mask').show();
+  
+    //로딩중 이미지 표시
+    $('#loadingImg').append(loadingImg);
+    $('#loadingImg').show();
+}
+ 
+function closeLoadingWithMask() {
+    $('#mask, #loadingImg').hide();
+    $('#mask, #loadingImg').empty(); 
+}
+
+function resize(obj) {
+	if(obj.scrollHeight > 250){
+		obj.style.height = '1px';
+	    obj.style.height = (12 + obj.scrollHeight) + 'px';
+	}
+    
+}
+
+//파이어베이스 이미지 업로드
+const firebaseConfig = {
+	  apiKey: "AIzaSyBf-7zB4MCZOc-48Xsxt2cyOTCRDfI80aw",
+	  authDomain: "healthapp-client.firebaseapp.com",
+	  projectId: "healthapp-client",
+	  storageBucket: "healthapp-client.appspot.com",
+	  messagingSenderId: "1011601613020",
+	  appId: "1:1011601613020:web:2a87e02a1e4b21e2d0d419",
+	  measurementId: "G-T99K3V7HCQ"
+};
+  
+firebase.initializeApp(firebaseConfig);
+const storage = firebase.storage();
+
+
+$("#testBtn").click(function(){
+	for(var i=0; i<imgArr.length; i++){
+		console.log(imgArr[i]);
+	}
+});
+
+$(document).ready(function(){
+	
+	// hidden타입 input에 작성정보 저장
+	$("#id").val(userInfo.id);	// 아이디
+	$("#nickname").val(userInfo.nickname);
+	
+	
+	// 목록으로(게시판 목록) 돌아가기
+	$("#goToList").click(function(){
+		if(confirm("글 작성을 취소하시겠습니까?\n작성된 글은 저장되지 않습니다.") == true){
+			location.href = "bbsList.html";
+		}else{
+			return;
+		}
+		
+	});
+	
+	// 이미지 재등록시 삭제하고 다시등록하는 코드 짜는중이었으니까 이어서 하면된다 지수야?
+	// 첨부하기 버튼 클릭
+	$('#fileSubmit').click(function() {
+		// 사진업로드 대기 문구창
+		//alert('사진업로드가 완료될때 까지 기다려주세요.');
+		
+		if(imgArr[0] == null){
+			insertImages();
+			
+		}else{
+			if(confirm("기존에 첨부한 사진은 삭제됩니다.\n이미지를 새로 첨부하시겠습니까?") == true){
+				
+				
+				for(var j=0; j<imgArr.length; j++){
+					deleteImages(imgArr[j]);
+				}
+				setTimeout("insertImages()", 1000);
+				
+				
+			}else{
+				return;
+			}
+		}
+		
+	});
+	
+	
+	// 게시글 등록하기
+	$('#writeBtn').click(function() {
+		$.ajax({
+			url:"http://localhost:3000/writebbs",
+			type:"post",
+			data:$("#form").serialize(),
+			success: function(msg){
+				if(msg == "success"){
+					alert('게시글을 등록했습니다.')
+					location.href = "bbsList.html";
+				}else{
+					alert('게시글 등록에 실패했습니다. \n다시 작성해주세요.')
+					location.href = "bbsList.html";
+				}
+			},
+			error: function(){
+				alert('error');
+			}
+		})
+	});
+	
+	
+});
+// 이미지 삭제 함수
+function deleteImages(str){
+	// 스토리지 ref
+	var storageRef = storage.ref();
+	var desertRef = storageRef.child(str);
+	
+	desertRef.delete().then(() => {
+		console.log("파일삭제 성공");
+	}).catch((error) => {
+		console.log("실패사유 : " + error);
+	});
+}
+
+// 이미지 추가 함수
+function insertImages(){
+	// 배열 초기화
+	imgArr = [];
+	// 선택된 파일의 갯수
+	fileCount = document.querySelector('#fileSelect').files.length;
+	
+	if(fileCount == 0){
+		alert('등록된 이미지가 없습니다')
+	}else{
+	
+	// 스토리지 ref
+	var storageRef = storage.ref();
+	// 다중업로드를 위한 for문
+	for(var i=0; i<fileCount; i++){
+		// 현재시간 가져오기
+		var today = new Date();
+		var now = today.getTime();
+
+		/// 선택된 파일
+		var file = document.querySelector('#fileSelect').files[i];
+		// 파일 확장자만 가져오기
+		var fileStr = file.name
+		var fileType = fileStr.split('.').pop();
+		// 오라클DB및 파이어베이스에 저장될 파일 이름
+		var fileName = 'images/' + userInfo.id + "_" + now + "." + fileType;
+		// 해당파일 이미지이름 배열의 추가(오라클 저장위해서)
+		imgArr[i] = fileName;
+		var file_path = storageRef.child(fileName);
+		var upload = file_path.put(file);
+		
+		upload.on(
+			'state_changed',
+			null,
+			(error)=>{
+				console.err('실패이유 : ',error);
+			},
+			() => {
+				upload.snapshot.ref.getDownloadURL().then((url) => {
+					// 업로드 성공시 실행할 내용 작성 가능
+					console.log(i);
+					console.log(imgArr.toString());
+				});
+			}
+		)
+	}
+	$("#bbsImage").val(imgArr.toString());
+	// 사진 저장 멘트
+	//setTimeout(function() {alert('사진이 저장되었습니다.')}, 5000);
+	// 현재 이미지 안뜸 문제 수정 필요함
+	loading(imgArr.length);
+	}
+}
+
+</script>
+
+</body>
+</html>
