@@ -115,7 +115,7 @@ $("#goToListBtn").click(function(){
 
 // 수정버튼 클릭
 $("#updateBtn").click(function(){
-	location.href = "bbsUpdate.html";
+	location.href = 'bbsUpdate.html?seq=' + seq;
 });
 
 //삭제버튼 클릭
@@ -193,11 +193,9 @@ $(document).ready(function(){
 	getBbs();
 	
 	// 해당 게시글의 댓글 가져오기
-	getReplyList();
-	
-	
-	
+	getReplyList();	
 });
+
 // textarea높이 자동조절
 var txtArea = $("#content");
 if (txtArea) {
@@ -258,7 +256,6 @@ function getBbs() {
 				//전체 슬라이드 컨테이너 넓이 설정
 				slides.style.width = (slideWidth + slideMargin) * slideCount + 'px'; 
 			}
-			
 			
 			$("#content").text(bbs.content);
 			if(userInfo.id != bbs.id){

@@ -94,13 +94,19 @@ function getBbsList( page ) {
 				let str = "";
 				// 작성된 게시글이 있을때
 				if(item != null){
+					var titleStr = "";
+					if(item.title.length >= 24){
+						titleStr = item.title.substr(0, 24) + '...';
+					}else{
+						titleStr = item.title;
+					}
 					
 					// 게시글 번호
 					str = '<div class="contentCenterPosition"><div class="listNumber">' + (i + 1) + '</div>';
 					
 					// 게시글 제목
 					if(item.del == 0){
-						str += '<div class="listTitle"><a href="bbsDetail.html?seq=' + item.seq + '">' + item.title + '</a></div>';
+						str += '<div class="listTitle"><a href="bbsDetail.html?seq=' + item.seq + '">' + titleStr + '</a></div>';
 					}
 					else if(item.del == 2){
 						str += '<div class="listTitle">이 글은 관리자에 의해 삭제되었습니다.</div>';
