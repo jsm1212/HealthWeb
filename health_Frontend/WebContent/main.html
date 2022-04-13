@@ -245,6 +245,7 @@ $.ajax({
 		// alert(JSON.stringify(list));
 		
 		$.each(list,function(i, item){
+			if(i<5){
 			let str = "<tr>" 
 			+ "<th>" + (i+1) + "</th>"
 			+ "<td>" + "<a href='bbsdetail.html?seq="+ item.seq + "'>" + item.title + "</a></td>"
@@ -252,6 +253,7 @@ $.ajax({
 			+ "</tr>";
 			
 			$("#tbody").append(str);
+			}
 		});
 	},
 	error:function(){
