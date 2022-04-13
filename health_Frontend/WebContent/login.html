@@ -193,21 +193,24 @@ $(document).ready(function(){
 			data: { id:$("#id").val().trim(), pwd:$("#pwd").val().trim()},
 			success:(data)=>{
 				// alert('success');
-				if(data == ""){
+				//alert(JSON.stringify(data))
+				if(data == "" || data.del == 1){
 					alert("id나 비밀번호를 확인하세요");
 					$("#id").val("");
 					$("#pwd").val("");
 				}else{
-					sessionStorage.setItem("login", JSON.stringify(data));// JSON data를 문자열로 변환해서 세션스토리지에 넣어줌
-					alert(data.name + " 님 환영합니다.");
-					location.href = "main.html";
-					
-					if($("#autoSave").is(":checked")){
-						alert("체크");
-						localStorage.setItem("login", JSON.stringify(data));
+					if(data.auth != 1){
+						sessionStorage.setItem("login", JSON.stringify(data));// JSON data를 문자열로 변환해서 세션스토리지에 넣어줌
+						alert(data.name + " 님 환영합니다.");
+						location.href = "main.html";
+
+						if($("#autoSave").is(":checked")){
+							localStorage.setItem("login", JSON.stringify(data));
+						}else{
+							localStorage.clear();
+						}
 					}else{
-						alert("체크 해제");
-						localStorage.clear();
+						location.href = "memberList.html";
 					}
 				}
 			},

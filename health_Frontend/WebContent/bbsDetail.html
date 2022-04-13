@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>나홀로GYM에 게시글</title>
+<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link rel="shortcut icon" type="image⁄x-icon" href="https://firebasestorage.googleapis.com/v0/b/healthapp-client.appspot.com/o/images%2Fhome.png?alt=media&token=c30ebcc4-6ca5-4745-a01e-ecaf8e97d972">
+<link href="css/bbsDetail.css?ver=0" rel="stylesheet" />
+
+</head>
+<body>
+<div class="contentCenterPosition">
+	<div id="mainFrame">
+		<!-- 제목 -->
+		<div id=titleFrame>
+			<div style="width:10%;">
+				제목
+			</div>
+			<div style="width:90%; padding: 0 1%;">
+				<input type="text" id="title" readonly="readonly">
+			</div>
+		</div>
+		
+		<!-- 작성자, 작성일, 조회수, 좋아요 -->
+		<div id="writerInfo">
+			<!-- 작성자 -->
+			<div class="infoHorizontal" style="width:45%">
+				<input type="text" id="nickname" readonly="readonly">
+			</div>
+			<!-- 작성일 -->
+			<div class="infoHorizontal" style="width:20%">
+				<input type="text" id="wdate" readonly="readonly">
+			</div>
+			<!-- 좋아요 / 조회수 -->
+			<div class="infoHorizontal" style="width:13%" id="likeAndCount">
+				
+			</div>			
+		</div>
+		
+		<!-- 내용 -->
+		<div id="contentFrame" align="center">
+			<div id="imgPosition">
+				<div id="slideShow">
+					<ul class="slides">
+					
+					</ul>
+					
+					<p class="controller">
+						<!-- &lang: 왼쪽 방향 화살표 &rang: 오른쪽 방향 화살표 -->
+						<span class="prev">&lang;</span>
+						<span class="next">&rang;</span>
+					</p>
+				</div>				
+			</div>
+			<div id="contentBox">
+				<textarea id="content" readonly="readonly"></textarea>
+				<div id="btnBox">
+					<div>
+						<button type="button" id="goToListBtn">목록으로</button>
+					</div>
+					<!-- 좋아요 버튼 -->
+					<div>
+						<button type="button" id="bbsLikeBtn">좋아요버튼</button>
+					</div>
+					<div align="right" style="width:15%;">
+						<button type="button" id="updateBtn">수정</button>
+						<button type="button" id="deleteBtn">삭제</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- 댓글 -->
+		<div>
+			<div>
+				댓글
+			</div>
+			<!-- 댓글 목록 -->
+			<div id=replyFrame>
+				<div class="replyList">
+				
+				</div>
+			</div>
+			<!-- 댓글작성 -->
+			<div id="writeReplyFrame">
+				<div>
+					<textarea id="replyWrite" onkeydown="resize(this)" onkeyup="resize(this)" placeholder="댓글을 입력해주세요."></textarea>
+				</div>
+				<div id=replyBtnFrame>
+					<div id="replybtnBox">
+						<button type="button" id="writeReplyBtn">등록</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+</div>
+
+<script type="text/javascript">
+//sessionStorage에서 가져온 로그인 정보
+let str = sessionStorage.getItem("login");
+// 가져온 로그인정보를 json형태로 변환
+let userInfo = JSON.parse(str);
+// 넘겨받은 seq번호 변수에 저장
+const url = new URL(location.href);
+const urlParams = url.searchParams;
+let seq = urlParams.get("seq");
+
+// 목록으로 버튼 클릭
+$("#goToListBtn").click(function(){
+	location.href = "bbsList.html";
+});
+
+// 수정버튼 클릭
+$("#updateBtn").click(function(){
+	location.href = 'bbsUpdate.html?seq=' + seq;
+});
+
+//삭제버튼 클릭
+$("#deleteBtn").click(function(){
+	$.ajax({
+		url:"http://localhost:3000/deleteBbs",
+		type: "post",
+		data: {"seq": seq},
+		success: function(msg){
+			if(msg == "success"){
+				alert('삭제되었습니다.');
+				location.href = "bbsList.html";
+			}else{
+				alert('삭제에 실패했습니다.\n다시 시도해주세요');
+			}
+		},
+		error: function(){
+			alert('error');
+		}
+	});
+});
+
+// 댓글 작성하기 버튼 클릭
+$("#writeReplyBtn").click(function(){
+	if($("#replyWrite").val().trim() == ""){
+		alert('작성된 댓글이 없습니다.');
+	}else{
+		if(confirm("댓글을 등록하시겠습니까?") == true){
+			// 확인 누를시 이벤트
+			writeReply();
+		}else{
+			return;
+		}
+	}
+	
+});
+
+// 좋아요 테스트버튼 클릭
+$("#bbsLikeBtn").click(function(){
+	$.ajax({
+		url: "http://localhost:3000/likeCount_W",
+		type: "post",
+		data: {
+			"bbs_no": seq,
+			"user_id": userInfo.id
+		},
+		success: function(msg){
+			if(msg == "count"){
+				alert('좋아요를 눌렀습니다!');
+				getBbs();
+				
+			}else{ // msg == notCount 일때
+				likeCancel();
+			}
+			
+		},
+		error: function(){
+			alert('error');
+		}
+	});
+});
+
+
+// 이미지 슬라이드 관련 변수지정
+let slides; //전체 슬라이드 컨테이너 
+let slideImg; //모든 슬라이드들  
+let slideCount; // 슬라이드 개수 
+
+
+let currentIdx = 0; //현재 슬라이드 index
+
+// 페이지가 시작될때 완료될 부분
+$(document).ready(function(){
+	// 선택한 게시글 목록 불러오기
+	getBbs();
+	
+	// 해당 게시글의 댓글 가져오기
+	getReplyList();	
+});
+
+// textarea높이 자동조절
+var txtArea = $("#content");
+if (txtArea) {
+    txtArea.each(function(){
+        $(this).height(this.scrollHeight);
+    });
+}
+
+// 댓글입력란(textarea) 크기 자동조절
+function resize(obj) {
+	obj.style.height = '1px';
+	obj.style.height = (12 + obj.scrollHeight) + 'px';
+    
+}
+
+// 게시글 정보 불러오기
+function getBbs() {
+	$.ajax({
+		url:"http://localhost:3000/bbsDetail",
+		type:"post",
+		data:{
+			"bbs_seq": seq,
+			"user_id": userInfo.id
+		},
+		success: function(bbs){
+			// 제목
+			$("#title").val(bbs.title);
+			// 작성자
+			$("#nickname").val(bbs.nickname);
+			// 작성일
+			var dateArr = bbs.wdate.split(":")	// :단위로 나눠서 배열로 저장
+			const wdate= dateArr[0] + ":" + dateArr[1]	// 변수에 원하는 표기방법으로 저장
+			$("#wdate").val(wdate);
+			// 좋아요 및 조회수
+			$("#likeAndCount").text(bbs.bbsLike + " / " + bbs.readcount);
+			if(bbs.bbsImage == null){
+				//$("#imgPosition").hide();
+				//$("#imgPosition").empty();
+				document.querySelector("#imgPosition").style.display="none";
+			}
+			// url을 통한 이미지 다운로드
+			if(bbs.bbsImage != null){
+				var imgArr = bbs.bbsImage.split(",");
+				var urlFront = "https://firebasestorage.googleapis.com/v0/b/healthapp-client.appspot.com/o/images%2F";
+				var urlBack = "?alt=media&token=df6804c5-5a28-44a9-a6b4-0a9e8df1589e";
+				$.each(imgArr, function(i, item){
+					let choiceImgArr = item.split("/");
+					let imgName = choiceImgArr[1];
+					
+					let str = '<li><img src="' + (urlFront + imgName + urlBack) + '" width="300px" height="300px" alt="" style="float:left;"></li>'
+									
+					$(".slides").append(str);
+				});
+				
+				slides = document.querySelector('.slides'); //전체 슬라이드 컨테이너 
+				slideImg = document.querySelectorAll('.slides li'); //모든 슬라이드들  
+				slideCount = slideImg.length; // 슬라이드 개수 
+				//전체 슬라이드 컨테이너 넓이 설정
+				slides.style.width = (slideWidth + slideMargin) * slideCount + 'px'; 
+			}
+			
+			$("#content").text(bbs.content);
+			if(userInfo.id != bbs.id){
+				$("#updateBtn").hide();
+				$("#deleteBtn").hide();
+			}
+		},
+		error: function(){
+			alert('error');
+		}
+	});
+}
+
+// 해당 게시글의 댓글 가져오기
+function getReplyList(){
+	$.ajax({
+		url:"http://localhost:3000/getReplyList",
+		type: "post",
+		data: {"seq": seq},
+		success: function(list){
+			$(".replyList").html("");
+			
+			$.each(list, function (i, item) {
+				let str = '<div class="replywriter">' +
+								'<div>' + item.nickname + '</div>' 
+								//+ '<div class="replyReply" onclick="replyReply()">'
+				if(userInfo.id == item.id){
+					str += 		'<div class="deleteReply" onclick="deleteReply(' + item.seq + ')"' + '>삭제하기</div>'
+				}
+				str += 		'</div>' +
+							'<div class="replyContent">' +
+								item.content + 
+							'</div>'
+				$(".replyList").append(str);
+								
+			});
+		},
+		error: function(){
+			alert('error');
+		}
+	});
+}
+
+// 댓글 등록하기
+function writeReply(){
+	$.ajax({
+		url: "http://localhost:3000/writeReply",
+		type: "post",
+		data: {
+			"replyNum": seq,
+			"id": userInfo.id,
+			"nickname": userInfo.nickname,
+			"title": "title",
+			"content": $("#replyWrite").val(),
+			"replyImage": null
+		},
+		success: function(msg){
+			if(msg == "success"){
+				alert("댓글을 등록되었습니다.");
+			}else{
+				alert("댓글 등록에 실패했습니다. 다시시도해주세요.")
+			}
+			$("#replyWrite").val("");
+			getReplyList();
+		},
+		error: function(){
+			alert('error');
+		}
+	});
+}
+
+// 해당 댓글 삭제하기
+function deleteReply(seq){
+	if(confirm("댓글을 삭제하시겠습니까?\n삭제된 글은 복구되지 않습니다.") == true){
+		// 확인 누를시 이벤트
+		$.ajax({
+			url: "http://localhost:3000/deleteReply",
+			type: "post",
+			data: {"seq": seq},
+			success: function(msg){
+				if(msg == "success"){
+					alert('삭제가 완료되었습니다.');
+					getReplyList();
+				}else{
+					alert('댓글삭제 실패. 다시시도해주십시오.');
+				}
+			},
+			error: function(){
+				alert('error');
+			}
+		});
+	}else{
+		// 취소 누를시 이벤트
+		return;
+	}
+}
+
+// 이미지 슬라이드 작동 함수 및 이벤트
+const prev = document.querySelector('.prev'); //이전 버튼 
+const next = document.querySelector('.next'); //다음 버튼 
+const slideWidth = 500; //한개의 슬라이드 넓이 
+const slideMargin = 350; //슬라이드간의 margin 값 
+ 
+function moveSlide(num) { 
+	slides.style.left = -num * 400 + 'px'; 
+	currentIdx = num; 
+} 
+
+prev.addEventListener('click', function () { 
+	//첫 번째 슬라이드로 표시 됐을때는 이전 버튼 눌러도 아무런 반응 없게 하기 위해 
+	//currentIdx !==0일때만 moveSlide 함수 불러옴  
+	if (currentIdx !== 0) moveSlide(currentIdx - 1); 
+}); 
+
+next.addEventListener('click', function () { 
+	// 마지막 슬라이드로 표시 됐을때는 다음 버튼 눌러도 아무런 반응 없게 하기 위해 
+	//currentIdx !==slideCount - 1 일때만 moveSlide 함수 불러옴 
+	if (currentIdx !== slideCount - 1) { moveSlide(currentIdx + 1); } 
+});
+
+// 좋아요 취소기능 함수
+function likeCancel(){
+	$.ajax({
+		url: "http://localhost:3000/likeCountCancel_W",
+		type: "post",
+		data: {
+			"bbs_no": seq,
+			"user_id": userInfo.id
+		},
+		success: function(msg){
+			if(msg == "complete"){
+				alert('좋아요를 취소했습니다.');
+				getBbs();
+			}else{
+				alert('좋아요 취소 실패.\n다시시도해주세요.');
+			}
+		},
+		error: function(){
+			alert('error');
+		}
+	});
+}
+ 
+
+</script>
+</body>
+</html>

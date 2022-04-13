@@ -1,0 +1,84 @@
+@charset "UTF-8";
+div{
+	border: 1px solid black;
+}
+textarea{
+	resize: none;
+	width: 99%;
+	min-height: 250px;
+	overflow-y: hidden;
+	overflow-x: hidden;
+}
+
+.contentCenterPosition{
+	display: flex;
+	justify-content: center;
+}
+
+#mainFrame{
+	width: 50%;
+	justify-content: center;
+}
+
+.Horizontal{
+	display: flex;
+}
+
+#standardTitle{
+	width: 10%;
+	text-align: center;
+}
+
+#inputTitle{
+	width: 90%;
+	padding: 0 1% 0 1%;
+}
+
+#title{
+	width: 99%;
+}
+
+#contentStyle{
+	padding: 1%;
+}
+
+
+#horizonBetween{
+	display: flex;
+	justify-content: space-between;
+}
+
+.leftMargin{
+	margin-left: 1%;	
+}
+
+.rightMargin{
+	width: 30%;
+	margin-right: 1%;
+	padding: 5px 0px;
+}
+
+#fileSelectBtn{
+	padding: 3px 10px;
+	cursor: pointer;
+	background-color: orange;
+	text-align: center;
+	border: 1px solid black;
+	border-radius: 4px;
+}
+
+#fileSubmit{
+	margin: 10px 0 0 0;
+}
+
+#buttonZone{
+	display: flex;
+	justify-content: space-between;
+	padding: 0 1%;
+}
+
+
+
+
+
+

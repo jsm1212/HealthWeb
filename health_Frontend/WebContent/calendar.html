@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link href="css/calendar.css?a" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<link rel="shortcut icon" type="image⁄x-icon" href="https://firebasestorage.googleapis.com/v0/b/healthapp-client.appspot.com/o/images%2Fhome.png?alt=media&token=c30ebcc4-6ca5-4745-a01e-ecaf8e97d972">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<div id="calendar">
+  <div class="detail">
+    <h3 id="day_of_week"></h3>
+    <h4 id="date"></h4>
+  </div>
+  <div class="cal">
+    <header>
+      <span id="prev">&lsaquo;</span>
+      <h3>
+        <strong id="month"></strong>
+        <b id="year"></b>
+      </h3>
+      <span id="next">&rsaquo;</span>
+    </header>
+    <table>
+      <thead>
+        <tr>
+          <th>s</th>
+          <th>m</th>
+          <th>t</th>
+          <th>w</th>
+          <th>t</th>
+          <th>f</th>
+          <th>s</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div align="right" style="margin: 5px; padding-right:480px; ">
+<button type="button" class="btn btn-outline-primary" id="psearchCalendar" onClick="location.href='psearchCalendar.html'">기간검색</button>
+</div>
+	<div align="center">
+		<textarea class="calTextarea"  placeholder="여기에 입력 해주세요." style="resize: none;" id="content"></textarea>
+	</div>
+<br><br>
+	<div align="center">
+		<textarea class="calTextareaRead" readonly style="resize: none;" id="contentRead" ></textarea>
+	</div>
+<br><br>
+	<div align="center">
+		<button type="button" class="btn btn-outline-primary" id="saveBtn">저장</button>
+		<button type="button" class="btn btn-outline-primary" id="updateBtn">수정</button>
+		<button type="button" class="btn btn-outline-primary" id="deleteBtn">삭제</button>
+	</div>
+</body>
+<script>
+var calendardate ="";
+var date = new Date(),
+nowYear = date.getFullYear(),
+nowMonth = Number(date.getMonth() + 1),
+nowDate = date.getDate(),
+nowDay = date.getDay();
+
+//달력 불러오기 함수
+function search(){
+	$.ajax({
+		url:"http://localhost:3000/searchCalendar",
+		type:"get",
+		data:{  "calendardate":calendardate,  "id":userInfo.id },
+		success:function(data){
+			$("#contentRead").empty()
+			if(data.calendardate != null){
+				$("#contentRead").html(data.content)
+				$("#saveBtn").hide();
+				document.getElementById("content").value='';
+			}
+			else{
+				$("#saveBtn").show();
+			}
+		},
+		error:function(){
+			alert('error');
+		}	
+	});    
+};
+
+var detailDate = document.getElementById('date'),
+detailDay = document.getElementById('day_of_week'),
+calMonth = document.getElementById('month'),
+calYear = document.getElementById('year');
+
+var weeksList = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
+monthList = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10' , '11', '12'];
+
+var cal = document.getElementById('calendar'),
+td = document.getElementsByTagName('td');
+
+var prev = document.getElementById('prev'),
+next = document.getElementById('next');
+
+//td 요소에 이벤트 지정 및 요일 가져오기
+function clearCurrent () {
+for(var i = 0; i < td.length; i++){
+  td[i].classList.remove('current');
+}
+}
+for(var i = 0; i < td.length; i++){
+td[i].setAttribute('data-num', i);
+
+td[i].addEventListener('click', function (ev) {
+   	
+  // current 클래스 추가
+  console.log(ev.target.innerText);
+  if(ev.target.innerText){ 
+    clearCurrent();
+    this.classList.add('current');
+      
+    nowYear = nowYear.toString()  
+    
+    nowDay = ev.target.innerText.toString() 
+	 if( parseInt(nowDay) <= 9){
+		 nowDay = "0" + nowDay
+	    }  
+   
+   calendardate = nowYear + calMonth.innerHTML + nowDay
+   console.log(calendardate);
+   //달력 불러오기 함수
+   search();
+     
+    //클릭한 날짜 Detail로 옮기기
+    var int = this.innerText,
+      index = ev.target.getAttribute('data-num');
+    detailDate.innerText= int;
+
+    if(index < 7){
+      detailDay.innerText = weeksList[index];
+    } else {
+      detailDay.innerText = weeksList[index % 7];
+    } 
+  }
+  
+})
+}
+
+function getTotalDate(year, month){ 
+if(month === 4 || month === 6 || month === 9 || month === 11){
+    return 30;
+} else if(month === 2){
+  if(year % 4 === 0){
+      return 29;
+  } else {
+    return 28;
+  }
+} else {
+  return 31;
+}
+}
+
+//초기 달력 세팅 함수
+
+function initialCalendar (date, day, year, month) {
+var startDay = new Date(year + '-' + month + '-' + '1').getDay();
+detailDate.innerHTML = date;
+detailDay.innerHTML = weeksList[day];
+if(year === nowYear || month === nowMonth){
+  td[startDay + date - 1].classList.add('current');
+}
+}
+
+//달 이동할 때 달력에 일 표시 함수, 초기 달력 세팅
+function setCalender (year, month) {
+var startDay = new Date(year + '-' + month + '-' + '1').getDay();
+for(var i = 0; i < getTotalDate(year, month); i++){
+  td[i + startDay].innerHTML = i + 1;   
+  td[i + startDay].style.cursor = 'pointer';
+}
+calMonth.innerHTML = monthList[month - 1];
+calYear.innerHTML = year;
+
+
+}
+
+//달 이동할 때 마다 초기화 해주는 함수
+function clearCalendar () {
+for(var i = 0; i < td.length; i++){
+  td[i].innerHTML = '';
+}
+}
+
+//이전 달로 이동
+function showPrev (year, month) {
+if(month === 1){
+  year--;
+  month = 13;
+  
+  nowMonth = month;
+  nowYear = year;
+}
+month--;
+calMonth.innerHTML = monthList[month - 1];
+calYear.innerHTML = year;
+nowMonth = month;
+
+clearCalendar();
+setCalender(year, month);
+clearCurrent();
+}
+
+//다음 달로 이동
+function showNext (year, month) {
+if(month === 12){
+  year++;
+  month = 0;
+  
+  nowMonth = month;
+  nowYear = year;
+}
+month++;
+calMonth.innerHTML = monthList[month - 1];
+calYear.innerHTML = year;
+nowMonth = month;
+
+clearCalendar();
+setCalender(year, month);
+clearCurrent();
+}
+
+
+prev.addEventListener('click', function () {
+showPrev(nowYear, nowMonth);
+});
+
+next.addEventListener('click', function () {
+showNext(nowYear, nowMonth);
+});
+
+initialCalendar(nowDate, nowDay, nowYear, nowMonth);
+setCalender(nowYear, nowMonth);
+
+
+//로그인 가져오는부분
+let str = sessionStorage.getItem("login");
+//가져온 로그인정보를 json형태로 변환
+let userInfo = JSON.parse(str);
+
+
+//수정 구현
+$("#updateBtn").click(function () {
+	$.ajax({
+		url:"http://localhost:3000/updateCalendar",
+		type:"get",
+		data: { "title":"", "calendardate":calendardate, "content":$("#content").val(), "id":userInfo.id},
+		success:function(msg){
+			if(msg == "OK" && $("#content").val() !=""){
+				if($("#content").val() != null && $("#content").val() !=""){
+					alert('정상적으로 수정 되었습니다');				
+					//달력 가져오기 함수
+					search();
+				}else{
+					alert('입력된 값이 없습니다.');
+				}
+			}else{
+				alert('입력된 값이 없습니다.');
+			}			
+		},	
+		error:function(){
+			alert('error');
+		}	
+	});
+});
+
+//save 구현
+$("#saveBtn").click(function () {
+	$.ajax({
+		url:"http://localhost:3000/writeCalendar",
+		type:"get",
+		data:{ "title":"", "calendardate":calendardate, "content":$("#content").val(), "id":userInfo.id },
+		success:function(msg){
+			if(msg == "YES"  && $("#content").val() !="" && $("#content").val() != null ){
+				alert('정상적으로 추가 되었습니다');
+				//달력 가져오기 함수
+				search();
+			}else{
+				alert('입력된 값이 없습니다.');
+			}			
+		},	
+		error:function(){
+			alert('error');
+		}	
+	});
+});
+
+//삭제 구현
+$("#deleteBtn").click(function () {
+	$.ajax({
+		url:"http://localhost:3000/deleteCalendar",
+		type:"get",
+		data:{ "title":"", "calendardate":calendardate, "content":$("#content").val(), "id":userInfo.id },
+		success:function(msg){
+			if(msg == "OK"){
+				alert('정상적으로 삭제 되었습니다');
+				//달력 가져오기 함수
+				search();
+			}else{
+				alert('삭제되지 않았습니다');
+			}			
+		},	
+		error:function(){
+			alert('error');
+		}	
+	});
+});
+
+
+</script>
+</html>
