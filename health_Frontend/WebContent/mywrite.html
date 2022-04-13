@@ -35,11 +35,12 @@
 				data:{id:id},
 				success:function(list){
 					$.each(list, function(i, item){
+						//alert(item.readcount + "   " + item.bbsLike);
 						let str = "<tr>"
 								+	 "<td>" + "<a href='bbsDetail.html?seq=" + item.seq + "'>" + item.title + "</td>"
 								+	 "<td>" + item.wdate.substring(0, 10) + "</td>"
 								+	 "<td>" + item.readcount + "</td>"
-								+	 "<td>" + item.bbslike + "</td>"
+								+	 "<td>" + item.bbsLike + "</td>"
 								+ "</tr>"
 						$("#tbody").append(str);
 					});

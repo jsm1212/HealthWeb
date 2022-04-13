@@ -17,7 +17,7 @@
 		<h2 align="center">회원 목록</h2>
 		<table class="table table-hover" style="text-align: center" id="table">
 			<thead>
-				<tr><th>아이디</th><th>닉네임</th><th>이름</th><th>이메일</th><th>전화번호</th></tr>
+				<tr><th>분류</th><th>아이디</th><th>닉네임</th><th>이름</th><th>이메일</th><th>전화번호</th></tr>
 			</thead>
 			
 			<tbody id="tbody">
@@ -26,8 +26,6 @@
 	</div>
 	
 	<script type="text/javascript">
-		let rowNum=0
-	
 		$(document).ready(function(){
 			// 회원 목록 불러오기
 			$.ajax({
@@ -35,16 +33,41 @@
 				type:"post",
 				success:function(data){
 					$.each(data, function(i, item){
-						$(rowNum).val(rowNum++)
-						//alert(rowNum)
+						let auth = item.auth;
 						
-						let str = "<tr>"
-								+	 "<td>" + item.id + "</td>"
-								+	 "<td>" + item.nickname + "</td>"
-								+	 "<td>" + item.name + "</td>"
-								+	 "<td>" + item.email + "</td>"
-								+	 "<td>" + item.tel + "</td>"
-								+ "</tr>";
+						let str=""
+						switch(auth){
+							case 3:
+								str = "<tr>"
+									+	 "<td>일반회원</td>"
+									+	 "<td>" + item.id + "</td>"
+									+	 "<td>" + item.nickname + "</td>"
+									+	 "<td>" + item.name + "</td>"
+									+	 "<td>" + item.email + "</td>"
+									+	 "<td>" + item.tel + "</td>"
+									+ "</tr>";
+								break;
+							case 4:
+								str = "<tr>"
+									+	 "<td>카카오</td>"
+									+	 "<td>" + item.id + "</td>"
+									+	 "<td>" + item.nickname + "</td>"
+									+	 "<td>" + item.name + "</td>"
+									+	 "<td>" + item.email + "</td>"
+									+	 "<td>" + item.tel + "</td>"
+									+ "</tr>";
+								break;
+							case 5:
+								str = "<tr>"
+									+	 "<td>구글</td>"
+									+	 "<td>" + item.id + "</td>"
+									+	 "<td>" + item.nickname + "</td>"
+									+	 "<td>" + item.name + "</td>"
+									+	 "<td>" + item.email + "</td>"
+									+	 "<td>" + item.tel + "</td>"
+									+ "</tr>";
+								break;	
+						};
 						$("#tbody").append(str);
 					});
 				},error:function(){

@@ -16,7 +16,7 @@
 		<h2>내 댓글</h2>
 		<table class="table table-hover" style="text-align: center">
 			<thead>
-				<tr><th width="60%">댓글</th><th>작성날짜</th><th>좋아요</th></tr>
+				<tr><th width="40%">댓글</th><th width="30%">본문 제목</th><th>작성날짜</th><th>좋아요</th></tr>
 			</thead>
 			
 			<tbody id="tbody">
@@ -35,7 +35,8 @@
 				success:function(list){
 					$.each(list, function(i, item){
 						let str = "<tr>"
-								+	 "<td>" + "<a href='bbsDetail.html?seq=" + item.seq + "'>" + item.content + "</td>"
+								+	 "<td>" + "<a href='bbsDetail.html?seq=" + item.replyNum + "'>" + item.content + "</td>"
+								+	 "<td>" + item.title + "</td>"
 								+	 "<td>" + item.wdate.substring(0, 10) + "</td>"
 								+	 "<td>" + item.replyLike + "</td>"
 								+ "</tr>"
