@@ -1,5 +1,10 @@
 @charset "UTF-8";
-
+body{
+	background-color:#f5f5f5;
+}
+h3{
+	margin-left:30px;
+}
 .contentCenterPosition{
 	display: flex;
 	justify-content: center;
@@ -53,8 +58,6 @@
 #nonList{
 	text-align: center;
 }
-
-
 
 #test{
 	display: table;
