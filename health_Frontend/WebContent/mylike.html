@@ -60,9 +60,10 @@
 	</div>
 	
 	<script type="text/javascript">
-	/* let login = sessionStorage.getItem("login");
+		let login = sessionStorage.getItem("login");
 		let id = JSON.parse(login).id
-	
+		//alert(id)
+		
 		$(document).ready(function(){
 			$.ajax({
 				url:"http://localhost:3000/getMyLike",
@@ -70,6 +71,7 @@
 				data:{id:id},
 				success:function(list){
 					$.each(list, function(i, item){
+						//alert(JSON.stringify(item))
 						let str = "<tr>"
 								+	 "<td>" + "<a href='bbsDetail.html?seq=" + item.seq + "'>" + item.title + "</td>"
 								+	 "<td>" + item.nickname+ "</td>"
@@ -83,7 +85,7 @@
 					alert("error");
 				}
 			});
-		}); */
+		});
 	</script>
 </body>
 </html>

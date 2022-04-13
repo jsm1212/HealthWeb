@@ -98,6 +98,7 @@
 		<div align="center">
 			<button type="button" class="btn btn-secondary" id="update">정보 수정</button>
 			<button type="button" class="btn btn-secondary" id="logout">로그 아웃</button>
+
 		</div>
 		<br><br>
 		<div align="center">
@@ -134,17 +135,6 @@
 			// 정보수정
 			$("#update").click(function(){
 				location.href = "myupdate.html";
-			});
-			
-			// 로그아웃
-			$("#logout").click(function(){
-				if(confirm("로그아웃 하시겠습니까?")) {
-					sessionStorage.clear();
-					location.href = "index.html";
-				}
-				else {
-					return false;
-				}
 			});
 			
 			// 운동루틴 확인
