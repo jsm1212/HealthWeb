@@ -29,14 +29,29 @@
 		</div>
 		
 		<div>
-			<div class="contentCenterPosition">
+			<!-- <div class="contentCenterPosition">
 				<div class="standardListNumber">번호</div>
 				<div class="standardListTitle">제목</div>
 				<div class="standardListWDate">작성일</div>
 				<div class="standardListWriter">작성자</div>
-			</div>
+			</div> 
+			
 			<div id="bbsList">
 			</div>
+			-->
+			<table>
+				<thead>
+					<tr>
+						<th>번호</th>
+						<th>제목</th>
+						<th>작성일</th>
+						<th>작성자</th>
+					</tr>
+				</thead>
+				<tbody id="bbsList">
+				
+				</tbody>
+			</table>
 			
 		</div>
 		
@@ -102,21 +117,26 @@ function getBbsList( page ) {
 					}
 					
 					// 게시글 번호
-					str = '<div class="contentCenterPosition"><div class="listNumber">' + (i + 1) + '</div>';
+					//str = '<div class="contentCenterPosition"><div class="listNumber">' + (i + 1) + '</div>';
+					str = '<tr><td>' + (i+1) + '</td>';
 					
 					// 게시글 제목
 					if(item.del == 0){
-						str += '<div class="listTitle"><a href="bbsDetail.html?seq=' + item.seq + '">' + titleStr + '</a></div>';
+						//str += '<div class="listTitle"><a href="bbsDetail.html?seq=' + item.seq + '">' + titleStr + '</a></div>';
+						str += '<td><a href="bbsDetail.html?seq=' + item.seq + '">' + titleStr + '</a></td>';
 					}
 					else if(item.del == 2){
-						str += '<div class="listTitle">이 글은 관리자에 의해 삭제되었습니다.</div>';
+						//str += '<div class="listTitle">이 글은 관리자에 의해 삭제되었습니다.</div>';
+						str += '<td>이 글은 관리자에 의해 삭제되었습니다.</td>';
 					}
 					
 					// 작성일
-					str += '<div class="listWDate">' + item.wdate + '</div>';
+					//str += '<div class="listWDate">' + item.wdate + '</div>';
+					str += '<td>' + item.wdate + '</td>'
 					
 					// 작성자
-					str += '<div class="listWriter">' + item.nickname + '</div></div>';
+					//str += '<div class="listWriter">' + item.nickname + '</div></div>';
+					str += '<td>' + item.nickname + '</td></tr>'
 					
 				}else{
 					

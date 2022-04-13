@@ -153,10 +153,10 @@ $("#writeReplyBtn").click(function(){
 	
 });
 
-// 좋아요 테스트버튼 클릭
+// 좋아요 버튼
 $("#bbsLikeBtn").click(function(){
 	$.ajax({
-		url: "http://localhost:3000/likeCount_W",
+		url: "http://localhost:3000/likeCount",
 		type: "post",
 		data: {
 			"bbs_no": seq,
@@ -379,7 +379,7 @@ next.addEventListener('click', function () {
 // 좋아요 취소기능 함수
 function likeCancel(){
 	$.ajax({
-		url: "http://localhost:3000/likeCountCancel_W",
+		url: "http://localhost:3000/likeCountCancel",
 		type: "post",
 		data: {
 			"bbs_no": seq,
