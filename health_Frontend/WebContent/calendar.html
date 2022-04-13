@@ -3,15 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<link href="css/calendar.css?a" rel="stylesheet" />
+<link href="css/calendar.css?as" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 <link rel="shortcut icon" type="image⁄x-icon" href="https://firebasestorage.googleapis.com/v0/b/healthapp-client.appspot.com/o/images%2Fhome.png?alt=media&token=c30ebcc4-6ca5-4745-a01e-ecaf8e97d972">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-<div id="calendar">
-  <div class="detail">
+ <nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Tenth navbar example">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample08" aria-controls="navbarsExample08" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample08">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">홈</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">운동목록</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="calendar.html">운동일정</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="bbsList.html">자유게시판</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="mypage.html">마이페이지</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+<div id="calendar" style="margin-top:30px;"> 
+  <div class="detail" >
     <h3 id="day_of_week"></h3>
     <h4 id="date"></h4>
   </div>
@@ -86,7 +113,7 @@
     </table>
   </div>
 </div>
-<div align="right" style="margin: 5px; padding-right:480px; ">
+<div align="right" style="margin: 5px; padding-right:545px; ">
 <button type="button" class="btn btn-outline-primary" id="psearchCalendar" onClick="location.href='psearchCalendar.html'">기간검색</button>
 </div>
 	<div align="center">
