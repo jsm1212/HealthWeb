@@ -143,3 +143,9 @@ table {
     border-radius: 0.25rem;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
+body {
+        height: 100vh;
+        background-image: url('images/go.jpg');
+        background-repeat : no-repeat;
+        background-size : cover;
+      }
