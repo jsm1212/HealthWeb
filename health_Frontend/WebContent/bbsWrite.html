@@ -6,7 +6,7 @@
 <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <link rel="shortcut icon" type="image⁄x-icon" href="https://firebasestorage.googleapis.com/v0/b/healthapp-client.appspot.com/o/images%2Fhome.png?alt=media&token=c30ebcc4-6ca5-4745-a01e-ecaf8e97d972">
-<link href="css/bbsWrite.css?afters" rel="stylesheet" />
+<link href="css/bbsWrite.css?afteraa" rel="stylesheet" />
 </head>
 <body>
 
@@ -28,12 +28,22 @@
 				<div id="horizonBetween">
 				
 					<div class="leftMargin">
-						이미지는 최대 5개까지 업로드가 가능합니다. 첨부하기 버튼을 눌러가 사진이 업로드 됩니다.
+						이미지는 최대 5개까지 업로드가 가능합니다.<br>첨부하기 버튼을 눌러야 사진이 업로드 됩니다.
 					</div>
 					
 					<div class="rightMargin">
-						<input type="file" id="fileSelect" onchange="addFile(this);" multiple>
-						<button type="button" id="fileSubmit">첨부하기</button>
+						<div>
+							<label id="fileSelectBtn" for="fileSelect">
+								사진고르기
+							</label>
+						</div>
+						
+						<input type="file" id="fileSelect" onchange="addFile(this);" style="display:none;" multiple>
+						<div>
+							<input type="text" id="selectedFile" readonly="readonly">
+							<button type="button" id="fileSubmit">첨부하기</button>
+						</div>
+						
 					</div>
 					
 				</div>
@@ -42,7 +52,7 @@
 			
 			<div>
 				<div id="contentStyle">
-					<textarea name="content" placeholder="내용을 입력하세요." onkeydown="resize(this)" onkeyup="resize(this)"></textarea>
+					<textarea id="content" name="content" placeholder="내용을 입력하세요." onkeydown="resize(this)" onkeyup="resize(this)"></textarea>
 					<input type="hidden" id="bbsImage" name="bbsImage">
 				</div>
 			</div>
@@ -84,16 +94,15 @@ function addFile(obj){
         alert("첨부파일은 최대 " + (maxFileCnt-1) + "개 까지 첨부 가능합니다.");
      	// 초기화
 	    document.querySelector("input[type=file]").value = "";
-    } 
-    
+    }
 }
-
+// 회색배경 로딩화면 함수
 function loading(index) {
 	const loadingImg = "https://firebasestorage.googleapis.com/v0/b/healthapp-client.appspot.com/o/images%2Floading.gif?alt=media&token=f1b4e573-1a1e-4fde-8fe3-f11d2a3c890c"
     LoadingWithMask(loadingImg);
     setTimeout("closeLoadingWithMask()", (index*1000));
 }
- 
+
 function LoadingWithMask(gif) {
     //화면의 높이와 너비를 구합니다.
     var maskHeight = $(document).height();
@@ -151,49 +160,41 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const storage = firebase.storage();
 
-
-$("#testBtn").click(function(){
-	for(var i=0; i<imgArr.length; i++){
-		console.log(imgArr[i]);
-	}
-});
-
 $(document).ready(function(){
 	
 	// hidden타입 input에 작성정보 저장
 	$("#id").val(userInfo.id);	// 아이디
 	$("#nickname").val(userInfo.nickname);
 	
-	
 	// 목록으로(게시판 목록) 돌아가기
-	$("#goToList").click(function(){
+	$("#goToList").click(() =>{
 		if(confirm("글 작성을 취소하시겠습니까?\n작성된 글은 저장되지 않습니다.") == true){
+			if(imgArr[0] != 0){
+				for(var j=0; j<imgArr.length; j++){
+					deleteImages(imgArr[j]);
+				}
+			}
 			location.href = "bbsList.html";
 		}else{
 			return;
 		}
-		
 	});
 	
-	// 이미지 재등록시 삭제하고 다시등록하는 코드 짜는중이었으니까 이어서 하면된다 지수야?
 	// 첨부하기 버튼 클릭
 	$('#fileSubmit').click(function() {
-		// 사진업로드 대기 문구창
-		//alert('사진업로드가 완료될때 까지 기다려주세요.');
 		
 		if(imgArr[0] == null){
 			insertImages();
-			
+			setTimeout("$('#selectedFile').val(imgArr[0] + '...');", (imgArr.length * 1000));
+			setTimeout("$('#fileSelect').val('');", (imgArr.length * 1000));
 		}else{
 			if(confirm("기존에 첨부한 사진은 삭제됩니다.\n이미지를 새로 첨부하시겠습니까?") == true){
-				
-				
 				for(var j=0; j<imgArr.length; j++){
 					deleteImages(imgArr[j]);
 				}
 				setTimeout("insertImages()", 1000);
-				
-				
+				setTimeout("$('#selectedFile').val(imgArr[0] + '...');", (imgArr.length * 1000));
+				setTimeout("$('#fileSelect').val('');", (imgArr.length * 1000));
 			}else{
 				return;
 			}
@@ -201,29 +202,37 @@ $(document).ready(function(){
 		
 	});
 	
-	
 	// 게시글 등록하기
 	$('#writeBtn').click(function() {
-		$.ajax({
-			url:"http://localhost:3000/writebbs",
-			type:"post",
-			data:$("#form").serialize(),
-			success: function(msg){
-				if(msg == "success"){
-					alert('게시글을 등록했습니다.')
-					location.href = "bbsList.html";
-				}else{
-					alert('게시글 등록에 실패했습니다. \n다시 작성해주세요.')
-					location.href = "bbsList.html";
+		
+		if($("#title").val() == null || $("#title").val().trim() == ""){
+			alert('제목을 입력해주세요.');
+		}
+		// 내용 null검사
+		else if($("#content").val() == null || $("#content").val().trim() == ""){
+			alert('내용을 입력해주세요.');
+		}else{
+			$.ajax({
+				url:"http://localhost:3000/writebbs",
+				type:"post",
+				data:$("#form").serialize(),
+				success: function(msg){
+					if(msg == "success"){
+						alert('게시글을 등록했습니다.')
+						location.href = "bbsList.html";
+					}else{
+						alert('게시글 등록에 실패했습니다. \n다시 작성해주세요.')
+						location.href = "bbsList.html";
+					}
+				},
+				error: function(){
+					alert('error');
 				}
-			},
-			error: function(){
-				alert('error');
-			}
-		})
+			});
+		}
+		
 	});
-	
-	
+
 });
 // 이미지 삭제 함수
 function deleteImages(str){
@@ -285,9 +294,6 @@ function insertImages(){
 		)
 	}
 	$("#bbsImage").val(imgArr.toString());
-	// 사진 저장 멘트
-	//setTimeout(function() {alert('사진이 저장되었습니다.')}, 5000);
-	// 현재 이미지 안뜸 문제 수정 필요함
 	loading(imgArr.length);
 	}
 }
