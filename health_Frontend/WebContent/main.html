@@ -32,13 +32,7 @@
 }
 .btn{
 }
-#list{
-	width:50%;
-}
 
-.table{
-	width:50%;
-}
 </style>
 <body>
 <div class="app">
@@ -65,13 +59,13 @@
             <a class="nav-link" href="#">운동목록</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">운동일정</a>
+            <a class="nav-link" href="calendar.html">운동일정</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">자유게시판</a>
+            <a class="nav-link" href="bbsList.html">자유게시판</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">마이페이지</a>
+            <a class="nav-link" href="mypage.html">마이페이지</a>
           </li>
         </ul>
       </div>
@@ -82,8 +76,9 @@
       
 
   <section>
-      <div id="list" class="row row-cols-1 row-cols-sm-2 row-cols-md-2 g-2">
-      <h3 class="pb-4 mb-4 border-bottom">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+      <div class="col">
+      <!-- <h3 class="pb-4 mb-4 border-bottom">
         운동목록
       </h3>
       <div class="col">
@@ -150,27 +145,26 @@
             </div>
           </div>
         </div>
-        </div>
-      <h3 class="pb-4 mb-4 border-bottom">
+        </div> -->
+      <div class="container">
+      <h3 class=" border-bottom">
         최근 게시글
       </h3>
       <table class="table table-sm">
-      <tr>
-      <th scope="row">1</th>
-      <td>작성자</td>
-      <td>내용</td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>작성자</td>
-      <td>내용</td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td>작성자</td>
-      <td>내용</td>
-    </tr>
+      <thead>
+		<tr>
+			<th>번호</th><th>제목</th><th>작성자</th>
+		</tr>
+	</thead>
+	<tbody id="tbody">
+		
+	</tbody>
 	</table>
+	
+	
+	</div>
+	
+	</div>
   	
   </section>
   
@@ -178,7 +172,7 @@
   <footer class="py-3 my-4">
     <ul class="nav justify-content-center border-bottom">
     </ul>
-    <p class="text-center text-muted">&copy; 2022 Company, Inc</p>
+    <p class="text-center text-muted">&copy; 멀티캠퍼스 6조</p>
   </footer>
 </div>
 </div>
@@ -241,6 +235,27 @@ $("#logout").click(function(){
 			sessionStorage.clear();
 			localStorage.clear();
 			location.href="login.html";
+	}
+});
+
+$.ajax({
+	url:"http://localhost:3000/getBbsList",
+	type:"get",
+	success:function(list){
+		// alert(JSON.stringify(list));
+		
+		$.each(list,function(i, item){
+			let str = "<tr>" 
+			+ "<th>" + (i+1) + "</th>"
+			+ "<td>" + "<a href='bbsdetail.html?seq="+ item.seq + "'>" + item.title + "</a></td>"
+			+ "<td>" + item.id + "</td>"
+			+ "</tr>";
+			
+			$("#tbody").append(str);
+		});
+	},
+	error:function(){
+		alert('error');
 	}
 });
 
