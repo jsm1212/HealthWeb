@@ -8,7 +8,7 @@
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
+<link href="css/psearchCalendar.css?a" rel="stylesheet" />
 <title>Insert title here</title>
 <style>
 /*datepicer 버튼 롤오버 시 손가락 모양 표시*/
@@ -20,20 +20,51 @@
 <body>
 <br><br><br><br>
 <div align="center">
- From: <input type="text" id="datepicker">
-    To: <input type="text" id="datepicker2" >
+ From: <input type="text" id="startDate">
+ &nbsp &nbsp &nbsp
+    To: <input type="text" id="endDate">
 </div>
-<br><br><br><br>
-
-<div class="form-floating" align="center">
-  <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="resize: none; width: 50%; height: 200px;"></textarea>
+<br>
+<div align="center">
+<button type="button" class="btn btn-primary" id="searchBtn" style="margin-right: 4%;">검색</button>
+<button type="button" class="btn btn-primary" id="menuBtn">메뉴</button>
 </div>
+<br><br>
 
-
+<div class="conteainer" >
+	<div class ="row"  >
+		<table class="table table-striped" style="text-align: center; border:1px solid #dddddd; width:50%;  margin: auto;" >
+			<thead>
+				<tr>
+					<th style="backgroud-color: #eeeeee; text-align: center;">번호</th>
+					<th style="backgroud-color: #eeeeee; text-align: center;">날짜</th>
+					<th style="backgroud-color: #eeeeee; text-align: center;">내용</th>
+				</tr>
+			</thead>
+			
+			<tbody id="tbody">
+				<!-- <tr>
+					<td>1</td>
+					<td>20220413</td>
+					<td>첫글입니다.</td>
+				</tr> -->
+			</tbody>
+			
+		</table>
+	</div>
+</div>
 </body>
 <script>
-var data = $( "#datepicker1" ).datepicker( "getDate" );
-console.log(data)
+
+//로그인 가져오는부분
+let str = sessionStorage.getItem("login");
+//가져온 로그인정보를 json형태로 변환
+let userInfo = JSON.parse(str);
+
+//값 가져오기
+
+
+var data = $( "#startDate" ).datepicker( "getDate" );
 $(function() {
     //모든 datepicker에 대한 공통 옵션 설정
     $.datepicker.setDefaults({
@@ -56,14 +87,65 @@ $(function() {
     });
 
     //input을 datepicker로 선언
-    $("#datepicker").datepicker();                    
-    $("#datepicker2").datepicker();
+    $("#startDate").datepicker();                    
+    $("#endDate").datepicker();
     
     //From의 초기값을 오늘 날짜로 설정
-    $('#datepicker').datepicker('setDate', 'today'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)
+    $('#startDate').datepicker('setDate', 'today'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)
     //To의 초기값을 내일로 설정
-    $('#datepicker2').datepicker('setDate', '+1D'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)
+    $('#endDate').datepicker('setDate', '+1D'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, -1M:한달후, -1Y:일년후)
 });
+//메뉴 버튼
+$("#menuBtn").click(function(){
+	location.href = "calendar.html";
+});
+//검색 버튼 
+$("#searchBtn").click(function(){
+	startDate.value=$("#startDate").val();
+	endDate.value=$("#endDate").val();
+
+	let startStr = $("#startDate").val().replace(/-/gi,'');
+	let endStr = $("#endDate").val().replace(/-/gi,'');	
+	
+	$("#tbody").html(""); 
+	
+	$.ajax({
+		url:"http://localhost:3000/psearchCalendar",
+		type:"get",
+		data:{"startDate":startStr, "endDate":endStr, "userId":userInfo.id},
+		
+		// startDate, int endDate
+		//startDate.value=$("#startDate").val();
+		//endDate.value=$("#endDate").val();
+		
+		success:function(list){
+			$.each(list, function(i, item){
+				
+				let str = "";
+				
+				str = '<tr>' +
+							'<td>' + (i+1) + '</td>' +
+							'<td>' + item.calendardate + '</td>' + 
+							'<td>' + item.content + '</td>' + 
+						'</tr>'
+				
+				//<tr>
+					//<td>1</td>
+					//<td>20220413</td>
+					//<td>첫글입니다.</td>
+				//</tr>
+				
+				$("#tbody").append(str);
+			});
+		},
+		error:function(){
+			alert('게시글 리스트 : error');
+		}
+	});
+});
+
+
+
 
 </script>
 </html>

@@ -218,7 +218,6 @@ if(year === nowYear || month === nowMonth){
 }
 
 //달 이동할 때 달력에 일 표시 함수, 초기 달력 세팅
-
 function setCalender (year, month) {
 var startDay = new Date(year + '-' + month + '-' + '1').getDay();
 for(var i = 0; i < getTotalDate(year, month); i++){
@@ -232,7 +231,6 @@ calYear.innerHTML = year;
 }
 
 //달 이동할 때 마다 초기화 해주는 함수
-
 function clearCalendar () {
 for(var i = 0; i < td.length; i++){
   td[i].innerHTML = '';
@@ -259,7 +257,6 @@ clearCurrent();
 }
 
 //다음 달로 이동
-
 function showNext (year, month) {
 if(month === 12){
   year++;
@@ -304,13 +301,16 @@ $("#updateBtn").click(function () {
 		type:"get",
 		data: { "title":"", "calendardate":calendardate, "content":$("#content").val(), "id":userInfo.id},
 		success:function(msg){
-			if(msg == "OK"){
-				alert('정상적으로 수정 되었습니다');
-				
-				//달력 가져오기 함수
-				search();
+			if(msg == "OK" && $("#content").val() !=""){
+				if($("#content").val() != null && $("#content").val() !=""){
+					alert('정상적으로 수정 되었습니다');				
+					//달력 가져오기 함수
+					search();
+				}else{
+					alert('입력된 값이 없습니다.');
+				}
 			}else{
-				alert('추가되지 않았습니다');
+				alert('입력된 값이 없습니다.');
 			}			
 		},	
 		error:function(){
@@ -326,12 +326,12 @@ $("#saveBtn").click(function () {
 		type:"get",
 		data:{ "title":"", "calendardate":calendardate, "content":$("#content").val(), "id":userInfo.id },
 		success:function(msg){
-			if(msg == "YES"){
+			if(msg == "YES"  && $("#content").val() !="" && $("#content").val() != null ){
 				alert('정상적으로 추가 되었습니다');
 				//달력 가져오기 함수
 				search();
 			}else{
-				alert('추가되지 않았습니다');
+				alert('입력된 값이 없습니다.');
 			}			
 		},	
 		error:function(){
@@ -352,7 +352,7 @@ $("#deleteBtn").click(function () {
 				//달력 가져오기 함수
 				search();
 			}else{
-				alert('추가되지 않았습니다');
+				alert('삭제되지 않았습니다');
 			}			
 		},	
 		error:function(){
