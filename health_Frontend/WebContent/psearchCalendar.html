@@ -8,16 +8,33 @@
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<link href="css/psearchCalendar.css?a" rel="stylesheet" />
+<link href="css/psearchCalendar.css?as" rel="stylesheet" />
 <title>Insert title here</title>
 <style>
 /*datepicer 버튼 롤오버 시 손가락 모양 표시*/
 .ui-datepicker-trigger{cursor: pointer;}
 /*datepicer input 롤오버 시 손가락 모양 표시*/
 .hasDatepicker{cursor: pointer;}
+body {
+  background-color:#f5f5f5;
+}
+
 </style>
 </head>
 <body>
+<header class="blog-header py-3">
+<div id="spaceBetween">
+	<div style="padding-left:2%;">
+		<h3 align="left" style="display:inline; ">기간검색</h3>
+	</div>
+	
+	<div align="right" style="display:inline;">
+		<span id="userNickname"></span>
+		<button type="button" class="btn btn-sm btn-secondary" id="logout" >로그아웃</button>
+	</div>
+</div>
+</header>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Tenth navbar example">
     <div class="container-fluid">
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample08" aria-controls="navbarsExample08" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,7 +44,7 @@
       <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample08">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">홈</a>
+            <a class="nav-link active" aria-current="page" href="main.html">홈</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">운동목록</a>
@@ -53,19 +70,19 @@
 </div>
 <br>
 <div align="center">
-<button type="button" class="btn btn-primary" id="searchBtn" style="margin-right: 4%;">검색</button>
-<button type="button" class="btn btn-primary" id="menuBtn">메뉴</button>
+<button type="button" class="btn bigbtn btn-secondary" id="searchBtn" style="margin-right: 4%; color:#fff; background-color: #333;">검색</button>
+<button type="button" class="btn bigbtn btn-secondary" id="menuBtn" style="color:#fff; background-color: #333;">메뉴</button>
 </div>
 <br><br>
-
+	
 <div class="conteainer" >
 	<div class ="row"  >
-		<table class="table table-striped" style="text-align: center; border:1px solid #dddddd; width:50%;  margin: auto;" >
+		<table class="table table-striped" style="text-align: center; border:1px solid #000000; width:50%;  margin: auto;" >
 			<thead>
-				<tr>
-					<th style="backgroud-color: #eeeeee; text-align: center;">번호</th>
-					<th style="backgroud-color: #eeeeee; text-align: center;">날짜</th>
-					<th style="backgroud-color: #eeeeee; text-align: center;">내용</th>
+				<tr style="background-color: #fff;">
+					<th>번호</th>
+					<th>날짜</th>
+					<th>내용</th>
 				</tr>
 			</thead>
 			
@@ -80,6 +97,15 @@
 		</table>
 	</div>
 </div>
+
+ <div class="container">
+  <footer class="py-3 my-4">
+    <ul class="nav justify-content-center border-bottom">
+    </ul>
+    <p class="text-center text-muted">&copy; 멀티캠퍼스 6조</p>
+  </footer>
+</div>
+
 </body>
 <script>
 
@@ -88,9 +114,71 @@ let str = sessionStorage.getItem("login");
 //가져온 로그인정보를 json형태로 변환
 let userInfo = JSON.parse(str);
 
+//로그아웃기능
+$(document).ready(function(){
+	
+	let str = sessionStorage.getItem("login"); // 세션저장소에서 값 빼옴
+	let json = JSON.parse(str); // 문자열을 JSON으로 파싱
+	let lstr = localStorage.getItem("login"); // 자동로그인했다면
+	let ljson = JSON.parse(lstr); 
+
+	if(str != null){
+	$("#userNickname").html(json.nickname+"님이 접속중입니다.");
+	}else{
+	$("#userNickname").html(ljson.nickname+"님이 접속중입니다.");
+	}
+
+	$("#logout").click(function(){
+		
+		if(confirm("로그아웃 하시겠습니까?") == true){
+			const userAuth = json.auth;
+			switch(userAuth){
+			case 4:
+				Kakao.init('33dac5c74d9c68aa75bc31a1474ec6cd');
+				
+				if(Kakao.Auth.getAccessToken()){
+					Kakao.API.request({
+						url:'/v1/user/unlink',
+						success:(res)=>{
+							console.log(res)
+						},
+						fail:(err)=>{
+							console.log(err)
+						},
+					})
+					Kakao.Auth.setAccessToken(undefined)
+				}
+			break
+			case 5:
+				let firebaseConfig = {
+				    apiKey: "AIzaSyBf-7zB4MCZOc-48Xsxt2cyOTCRDfI80aw",
+				    authDomain: "healthapp-client.firebaseapp.com",
+				    projectId: "healthapp-client",
+				    storageBucket: "healthapp-client.appspot.com",
+				    messagingSenderId: "1011601613020",
+				    appId: "1:1011601613020:web:2a87e02a1e4b21e2d0d419",
+				    measurementId: "G-T99K3V7HCQ"
+				  };
+
+				// Initialize Firebase
+				firebase.initializeApp(firebaseConfig);
+				firebase.auth().signOut().then(()=>{
+					console.log("구글 로그아웃 성공")
+				}).catch((err)=>{
+					console.log("구글 로그아웃 에러")
+				})
+			}
+				alert("로그아웃되었습니다.")
+				sessionStorage.clear();
+				localStorage.clear();
+				location.href="login.html";
+		}
+	});
+
+
+	})
+	
 //값 가져오기
-
-
 var data = $( "#startDate" ).datepicker( "getDate" );
 $(function() {
     //모든 datepicker에 대한 공통 옵션 설정

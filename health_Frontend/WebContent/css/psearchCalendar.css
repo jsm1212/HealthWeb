@@ -1,1 +1,4 @@
-@charset "EUC-KR";
+#spaceBetween{
+	display: flex;
+	justify-content: space-between;
+}

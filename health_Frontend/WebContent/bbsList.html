@@ -119,7 +119,13 @@ table{
 		
 	</div>
 </div>
-
+  	<div class="container">
+  <footer class="py-3 my-4">
+    <ul class="nav justify-content-center border-bottom">
+    </ul>
+    <p class="text-center text-muted">&copy; 멀티캠퍼스 6조</p>
+  </footer>
+</div>
 <script type="text/javascript">
 $(document).ready(function(){
 	let str = sessionStorage.getItem("login");
@@ -182,7 +188,7 @@ function getBbsList( page ) {
 					
 					// 작성일
 					//str += '<div class="listWDate">' + item.wdate + '</div>';
-					str += '<td>' + item.wdate + '</td>'
+					str += '<td>' + item.wdate.substr(0, 18); + '</td>'
 					
 					// 작성자
 					//str += '<div class="listWriter">' + item.nickname + '</div></div>';
