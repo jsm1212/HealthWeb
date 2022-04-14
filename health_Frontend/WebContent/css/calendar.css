@@ -143,9 +143,10 @@ table {
     border-radius: 0.25rem;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
-/* body {
-        height: 130vh;
-        background-image: url('../images/cat.png');
+/*  body {
+ 		padding:500px;
+        height: 20vh;
+        background-image: url('../images/1.gif');
         background-repeat : no-repeat;
-        background-size : cover;
-      } */
+        background-size : 20%;
+      }  */

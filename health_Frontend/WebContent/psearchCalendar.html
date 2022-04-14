@@ -18,6 +18,33 @@
 </style>
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Tenth navbar example">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample08" aria-controls="navbarsExample08" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample08">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">홈</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">운동목록</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="calendar.html">운동일정</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="bbsList.html">자유게시판</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="mypage.html">마이페이지</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 <br><br><br><br>
 <div align="center">
  시작일 : <input type="text" id="startDate">
@@ -119,24 +146,28 @@ $("#searchBtn").click(function(){
 		//endDate.value=$("#endDate").val();
 		
 		success:function(list){
-			$.each(list, function(i, item){
-				
-				let str = "";
-				
-				str = '<tr>' +
-							'<td>' + (i+1) + '</td>' +
-							'<td>' + item.calendardate + '</td>' + 
-							'<td>' + item.content + '</td>' + 
-						'</tr>'
-				
-				//<tr>
-					//<td>1</td>
-					//<td>20220413</td>
-					//<td>첫글입니다.</td>
-				//</tr>
-				
-				$("#tbody").append(str);
-			});
+			if(list[0] != null){
+				$.each(list, function(i, item){
+					let str = "";
+					
+					str = '<tr>' +
+								'<td>' + (i+1) + '</td>' +
+								'<td>' + item.calendardate + '</td>' + 
+								'<td>' + item.content + '</td>' + 
+							'</tr>'
+					
+					//<tr>
+						//<td>1</td>
+						//<td>20220413</td>
+						//<td>첫글입니다.</td>
+					//</tr>
+					
+					$("#tbody").append(str);
+				});
+			}else{
+				alert("검색값이 없습니다.");
+			}
+			
 		},
 		error:function(){
 			alert('게시글 리스트 : error');
