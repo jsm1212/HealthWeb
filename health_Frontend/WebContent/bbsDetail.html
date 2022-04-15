@@ -6,38 +6,79 @@
 <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <link rel="shortcut icon" type="image⁄x-icon" href="https://firebasestorage.googleapis.com/v0/b/healthapp-client.appspot.com/o/images%2Fhome.png?alt=media&token=c30ebcc4-6ca5-4745-a01e-ecaf8e97d972">
-<link href="css/bbsDetail.css?ver=0" rel="stylesheet" />
+<link href="css/bbsDetail.css?ver=0assa" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+<style type="text/css">
+body {
+  line-height: 1;
+  background-color:#f5f5f5;
+}
+</style>
 
 </head>
 <body>
+<header class="blog-header py-3">
+<div id="spaceBetween">
+	<div style="padding-left:2%;">
+		<h3 align="left" style="display:inline;">자유게시판</h3>
+	</div>
+	
+	<div align="right" style="display:inline;">
+		<span id="userNickname"></span>
+		<button type="button" class="btn btn-sm btn-secondary" id="logout" >로그아웃</button>
+	</div>
+</div>
+</header>
+
+ <nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Tenth navbar example">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample08" aria-controls="navbarsExample08" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample08">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="main.html">홈</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="workList">운동목록</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="calendar.html">운동일정</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="bbsList.html">자유게시판</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="mypage.html">마이페이지</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <br><br><br>
 <div class="contentCenterPosition">
 	<div id="mainFrame">
 		<!-- 제목 -->
-		<div id=titleFrame>
-			<div style="width:10%;">
-				제목
-			</div>
-			<div style="width:90%; padding: 0 1%;">
-				<input type="text" id="title" readonly="readonly">
-			</div>
-		</div>
-		
-		<!-- 작성자, 작성일, 조회수, 좋아요 -->
-		<div id="writerInfo">
-			<!-- 작성자 -->
-			<div class="infoHorizontal" style="width:45%">
-				<input type="text" id="nickname" readonly="readonly">
-			</div>
-			<!-- 작성일 -->
-			<div class="infoHorizontal" style="width:20%">
-				<input type="text" id="wdate" readonly="readonly">
-			</div>
-			<!-- 좋아요 / 조회수 -->
-			<div class="infoHorizontal" style="width:13%" id="likeAndCount">
-				
-			</div>			
-		</div>
-		
+		<table class="table table-hover">
+					<tr>
+						<th><input type="text" id="title" readonly="readonly"></th>
+					</tr>
+					<tr>
+					<th>
+					<input type="text" id="nickname" readonly="readonly">
+					</th>
+					<th>
+					<input type="text" id="wdate" readonly="readonly">
+					</th>
+					<th>
+					<div class="infoHorizontal" style="width:50%" id="likeAndCount"></div>		
+					</th>
+					</tr>
+		</table>		
 		<!-- 내용 -->
 		<div id="contentFrame" align="center">
 			<div id="imgPosition">
@@ -57,15 +98,16 @@
 				<textarea id="content" readonly="readonly"></textarea>
 				<div id="btnBox">
 					<div>
-						<button type="button" id="goToListBtn">목록으로</button>
+						<button type="button" class="btn bigbtn btn-secondary" id="goToListBtn" style="color:#fff; background-color: #333;">목록으로</button>
 					</div>
+
 					<!-- 좋아요 버튼 -->
 					<div>
-						<button type="button" id="bbsLikeBtn">좋아요버튼</button>
+						<button type="button" class="btn bigbtn btn-secondary" id="bbsLikeBtn" style="color:#fff; background-color: #333;">좋아요버튼</button>
 					</div>
 					<div align="right" style="width:15%;">
-						<button type="button" id="updateBtn">수정</button>
-						<button type="button" id="deleteBtn">삭제</button>
+						<button type="button" class="btn bigbtn btn-secondary" id="updateBtn" style="color:#fff; background-color: #333;">수정</button>
+						<button type="button" class="btn bigbtn btn-secondary" id="deleteBtn" style="color:#fff; background-color: #333;">삭제</button>
 					</div>
 				</div>
 			</div>
@@ -89,13 +131,21 @@
 				</div>
 				<div id=replyBtnFrame>
 					<div id="replybtnBox">
-						<button type="button" id="writeReplyBtn">등록</button>
+						<button type="button" class="btn bigbtn btn-secondary" id="writeReplyBtn"  style="color:#fff; background-color: #333;">등록</button>
 					</div>
 				</div>
 			</div>
 		</div>
 		
 	</div>
+</div>
+
+<div class="container">
+  <footer class="py-3 my-4">
+    <ul class="nav justify-content-center border-bottom">
+    </ul>
+    <p class="text-center text-muted">&copy; 멀티캠퍼스 6조</p>
+  </footer>
 </div>
 
 <script type="text/javascript">
@@ -107,6 +157,68 @@ let userInfo = JSON.parse(str);
 const url = new URL(location.href);
 const urlParams = url.searchParams;
 let seq = urlParams.get("seq");
+
+//로그아웃기능
+$(document).ready(function(){
+	
+	let str = sessionStorage.getItem("login"); // 세션저장소에서 값 빼옴
+	let json = JSON.parse(str); // 문자열을 JSON으로 파싱
+	let lstr = localStorage.getItem("login"); // 자동로그인했다면
+	let ljson = JSON.parse(lstr); 
+
+	if(str != null){
+	$("#userNickname").html(json.nickname+"님이 접속중입니다.");
+	}else{
+	$("#userNickname").html(ljson.nickname+"님이 접속중입니다.");
+	}
+
+	$("#logout").click(function(){
+		
+		if(confirm("로그아웃 하시겠습니까?") == true){
+			const userAuth = json.auth;
+			switch(userAuth){
+			case 4:
+				Kakao.init('33dac5c74d9c68aa75bc31a1474ec6cd');
+				
+				if(Kakao.Auth.getAccessToken()){
+					Kakao.API.request({
+						url:'/v1/user/unlink',
+						success:(res)=>{
+							console.log(res)
+						},
+						fail:(err)=>{
+							console.log(err)
+						},
+					})
+					Kakao.Auth.setAccessToken(undefined)
+				}
+			break
+			case 5:
+				let firebaseConfig = {
+				    apiKey: "AIzaSyBf-7zB4MCZOc-48Xsxt2cyOTCRDfI80aw",
+				    authDomain: "healthapp-client.firebaseapp.com",
+				    projectId: "healthapp-client",
+				    storageBucket: "healthapp-client.appspot.com",
+				    messagingSenderId: "1011601613020",
+				    appId: "1:1011601613020:web:2a87e02a1e4b21e2d0d419",
+				    measurementId: "G-T99K3V7HCQ"
+				  };
+
+				// Initialize Firebase
+				firebase.initializeApp(firebaseConfig);
+				firebase.auth().signOut().then(()=>{
+					console.log("구글 로그아웃 성공")
+				}).catch((err)=>{
+					console.log("구글 로그아웃 에러")
+				})
+			}
+				alert("로그아웃되었습니다.")
+				sessionStorage.clear();
+				localStorage.clear();
+				location.href="login.html";
+		}
+	});
+});
 
 // 목록으로 버튼 클릭
 $("#goToListBtn").click(function(){
