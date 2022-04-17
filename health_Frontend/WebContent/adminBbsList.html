@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>나홀로GYM에 커뮤니티</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link rel="shortcut icon" type="image⁄x-icon" href="https://firebasestorage.googleapis.com/v0/b/healthapp-client.appspot.com/o/images%2Fhome.png?alt=media&token=c30ebcc4-6ca5-4745-a01e-ecaf8e97d972">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<link href="css/bbsList.css?ver=3" rel="stylesheet" />
+<script type="text/javascript" src="./jquery/jquery.twbsPagination.min.js"></script>
+</head>
+<style>
+nav{
+	margin-bottom:30px;
+}
+table{
+	margin-top:25px;
+	background-color:#fff;
+}
+.table_container{
+	margin-bottom:23px;
+}
+
+</style>
+<body>
+
+ <header class="blog-header py-3 d-flex">
+        
+ <h3 class="flex-grow-1">관리자페이지</h3>
+<div style="margin-right:30px;">
+	<span id="userNickname"></span>
+	<button type="button" class="btn btn-sm btn-secondary" id="logout">로그아웃</button>
+</div>
+  </header>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Tenth navbar example">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample08" aria-controls="navbarsExample08" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample08">
+        <ul id="navbar-nav" class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="main.html">홈</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="adminBbsList.html">게시판관리</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="memberList.html">회원관리</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+<div class="contentCenterPosition">
+	<div id="mainFrame">
+		<div class="contentCenterPosition">
+			<div>
+				<select class="form-select form-select-sm" id="_choice" name="choice">
+					<option selected>선택</option>
+					<option value="title">제목</option>
+					<option value="content">내용</option>
+					<option value="writer">작성자</option>
+				</select>
+			</div>
+			<div>
+				<input class="form-control form-control-sm" type="text" placeholder="검색어를 입력해주세요" id="_search" name="search">
+			</div>
+			<div style="margin-left: 5px;">
+				<button class="btn btn-dark btn-sm" type="button" id="btnSearch" >검색</button>
+			</div>
+		</div>
+		
+		<div class="table_container">
+			<!--<div class="contentCenterPosition">
+				<div class="standardListNumber">번호</div>
+				<div class="standardListTitle">제목</div>
+				<div class="standardListWDate">작성일</div>
+				<div class="standardListWriter">작성자</div>
+			</div> 
+			
+			<div id="bbsList">
+			</div>
+			-->
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>번호</th>
+						<th>제목</th>
+						<th>작성일</th>
+						<th>작성자</th>
+					</tr>
+				</thead>
+				<tbody id="bbsList">
+				
+				</tbody>
+			</table>
+			
+		</div>
+		
+		<div class="contentCenterPosition">
+			<div>
+				<ul id="pagination"></ul>
+			</div>			
+		</div>
+		
+		<div class="contentCenterPosition">
+			<div>
+				<button class="btn btn-dark" type="button" id="writeBbsBtn" >글쓰기</button>
+			</div>
+		</div>
+		
+	</div>
+</div>
+<div class="container">
+	 <footer class="py-3 my-4">
+		<ul class="nav justify-content-center border-bottom"></ul>
+		<p class="text-center text-muted">&copy; 멀티캠퍼스 6조</p>
+	 </footer>
+</div>
+<script type="text/javascript">
+
+//로그아웃기능
+$(document).ready(function(){
+	
+	let str = sessionStorage.getItem("login"); // 세션저장소에서 값 빼옴
+	let json = JSON.parse(str); // 문자열을 JSON으로 파싱
+	let lstr = localStorage.getItem("login"); // 자동로그인했다면
+	let ljson = JSON.parse(lstr); 
+
+	if(str != null){
+	$("#userNickname").html(json.nickname+"님이 접속중입니다.");
+	}else{
+	$("#userNickname").html(ljson.nickname+"님이 접속중입니다.");
+	}
+
+	$("#logout").click(function(){
+		
+		if(confirm("로그아웃 하시겠습니까?") == true){
+			const userAuth = json.auth;
+			switch(userAuth){
+			case 4:
+				Kakao.init('33dac5c74d9c68aa75bc31a1474ec6cd');
+				
+				if(Kakao.Auth.getAccessToken()){
+					Kakao.API.request({
+						url:'/v1/user/unlink',
+						success:(res)=>{
+							console.log(res)
+						},
+						fail:(err)=>{
+							console.log(err)
+						},
+					})
+					Kakao.Auth.setAccessToken(undefined)
+				}
+			break
+			case 5:
+				let firebaseConfig = {
+				    apiKey: "AIzaSyBf-7zB4MCZOc-48Xsxt2cyOTCRDfI80aw",
+				    authDomain: "healthapp-client.firebaseapp.com",
+				    projectId: "healthapp-client",
+				    storageBucket: "healthapp-client.appspot.com",
+				    messagingSenderId: "1011601613020",
+				    appId: "1:1011601613020:web:2a87e02a1e4b21e2d0d419",
+				    measurementId: "G-T99K3V7HCQ"
+				  };
+
+				// Initialize Firebase
+				firebase.initializeApp(firebaseConfig);
+				firebase.auth().signOut().then(()=>{
+					console.log("구글 로그아웃 성공")
+				}).catch((err)=>{
+					console.log("구글 로그아웃 에러")
+				})
+			}
+				alert("로그아웃되었습니다.")
+				sessionStorage.clear();
+				localStorage.clear();
+				location.href="login.html";
+		}
+	});
+});
+
+$(document).ready(function(){
+	let str = sessionStorage.getItem("login");
+	let userInfo = JSON.parse(str);
+	
+	getBbsList(0);
+	getBbsCount();
+	
+	// 글쓰기 버튼 클릭 이벤트
+	$("#writeBbsBtn").click(function(){
+		location.href = "bbsWrite.html";
+	});
+	
+	// 검색버튼 클릭 이벤트
+	$("#btnSearch").click(function(){
+		getBbsList(0);
+		getBbsCount();		
+	});
+	
+})
+
+// 게시판 리스트 불러오기
+function getBbsList( page ) {
+	
+	let choice = $("#_choice").val();
+	let search = $("#_search").val();
+	
+	$("#bbsList").html(""); // 테이블 초기화
+	
+	$.ajax({
+		url:"http://localhost:3000/getBbsListSearchPage",
+		type:"get",
+		data:{"choice":choice, "search":search, "page": page},
+		success:function(list){
+			$.each(list, function(i, item){
+				
+				let str = "";
+				// 작성된 게시글이 있을때
+				if(item != null){
+					var titleStr = "";
+					if(item.title.length >= 24){
+						titleStr = item.title.substr(0, 24) + '...';
+					}else{
+						titleStr = item.title;
+					}
+					
+					// 게시글 번호
+					//str = '<div class="contentCenterPosition"><div class="listNumber">' + (i + 1) + '</div>';
+					str = '<tr><td>' + (i+1) + '</td>';
+					
+					// 게시글 제목
+					if(item.del == 0){
+						//str += '<div class="listTitle"><a href="bbsDetail.html?seq=' + item.seq + '">' + titleStr + '</a></div>';
+						str += '<td><a href="bbsDetail.html?seq=' + item.seq + '">' + titleStr + '</a></td>';
+					}
+					else if(item.del == 2){
+						//str += '<div class="listTitle">이 글은 관리자에 의해 삭제되었습니다.</div>';
+						str += '<td>이 글은 관리자에 의해 삭제되었습니다.</td>';
+					}
+					
+					// 작성일
+					//str += '<div class="listWDate">' + item.wdate + '</div>';
+					str += '<td>' + item.wdate.substr(0, 16); + '</td>'
+					
+					// 작성자
+					//str += '<div class="listWriter">' + item.nickname + '</div></div>';
+					str += '<td>' + item.nickname + '</td></tr>'
+					
+				}else{
+					
+					str += '<div class="contentCenterPosition"><div id="nonList">작성된 글이 없습니다.</div></div>'
+				}
+				
+				$("#bbsList").append(str);
+			});
+		},
+		error:function(){
+			alert('게시글 리스트 : error');
+		}
+	});
+}
+
+
+//글의 총수를 취득
+function getBbsCount() {
+	let choice = $("#_choice").val();
+	let search = $("#_search").val();
+	
+	$.ajax({
+		url:"http://localhost:3000/getBbsCount",
+		type:"get",
+		data:{ "choice":choice, "search":search, "page":0 },
+		success:function(count){
+			//alert(count);
+			loadPage(count);
+		},
+		error:function(){
+			alert('getBbsCount error');
+		}		
+	});	
+}
+
+
+function loadPage( totalCount ) { // 글의 총수		 
+	let pageSize = 10;		
+	
+	let _totalPages = totalCount / 10 // 10 10 3
+	if(totalCount % 10 > 0){
+		_totalPages++;
+	}
+	
+	$('#pagination').twbsPagination('destroy');	// 페이지 갱신
+	
+	$('#pagination').twbsPagination({		
+	    totalPages: _totalPages,
+	    visiblePages: 10,
+	    first:'<span sris-hidden="true">«</span>',
+	    last:'<span sris-hidden="true">»</span>',
+	    prev:"이전",
+	    next:"다음",
+	    initiateStartPageClick:false,	// onPageClick 자동호출 방지
+	    onPageClick: function (event, page) {
+	        // alert(page);
+	        getBbsList( page - 1 );
+	    }
+	})
+}
+
+</script>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -9,6 +9,7 @@
 <style>
 body{ background-color:#f5f5f5; }
 h3{ margin-left:30px; }
+.card{ margin-top:50px; }
 </style>
 </head>
 <body>
@@ -47,5 +48,125 @@ h3{ margin-left:30px; }
       </div>
     </div>
   </nav>
+  
+  <div class="card mb-3">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="../images/딥스쿼트.gif" class="img-fluid rounded-start" alt="...">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">맨몸 스쿼트</h5>
+        <p class="card-text">중량 스쿼트가 부담스러우시다면 맨몸 스쿼트를 시도해보세요.<br>
+        무산소 운동 중 하나로 데드리프트, 벤치 프레스와 더불어 웨이트 트레이닝의 3대 운동 중 하나입니다.
+. 특히 하체운동에서는 '알파이자 오메가'인 운동입니다.
+        
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  <div class="col">
+    <div class="card h-100">
+    <div class="card-header">
+        <small class="text-muted">구분동작 1</small>
+      </div>
+      <img src="../images/딥스쿼트1.jpg" class="card-img-top" alt="...">
+      <div class="card-body">
+        <p class="card-text">두 팔을 뻗어 코어 밸런스를 맞춘 후 다리를 어깨 너비로 벌려줍니다. </p>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card h-100">
+    <div class="card-header">
+        <small class="text-muted">구분동작 2</small>
+      </div>
+      <img src="../images/딥스쿼트3.jpg" class="card-img-top" alt="...">
+      <div class="card-body">
+        <p class="card-text">하체 근육의 저항을 느끼며 그대로 앉아줍니다.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card h-100">
+    <div class="card-header">
+        <small class="text-muted">구분동작 3</small>
+      </div>
+      <img src="../images/딥스쿼트2.jpg" class="card-img-top" alt="...">
+      <div class="card-body">
+        <p class="card-text">다시 역순으로 일어서며 동작을 반복합니다.</p>
+      </div>
+    </div>
+  </div>
+  </div>
 </body>
+<script>
+let str = sessionStorage.getItem("login"); // 세션저장소에서 값 빼옴
+let json = JSON.parse(str); // 문자열을 JSON으로 파싱
+let lstr = localStorage.getItem("login"); // 자동로그인했다면
+let ljson = JSON.parse(lstr); 
+
+if(json.auth!=1){
+	$("#adminPageBtn").hide();
+}
+
+$("#adminPageBtn").click(()=>{
+	location.href="memberList.html"
+});
+
+if(str != null){
+$("#userNickname").html(json.nickname+"님이 접속중입니다.");
+}else{
+$("#userNickname").html(ljson.nickname+"님이 접속중입니다.");
+}
+$("#logout").click(function(){
+	
+	if(confirm("로그아웃 하시겠습니까?") == true){
+		const userAuth = json.auth;
+		switch(userAuth){
+		case 4:
+			Kakao.init('33dac5c74d9c68aa75bc31a1474ec6cd');
+			
+			if(Kakao.Auth.getAccessToken()){
+				Kakao.API.request({
+					url:'/v1/user/unlink',
+					success:(res)=>{
+						console.log(res)
+					},
+					fail:(err)=>{
+						console.log(err)
+					},
+				})
+				Kakao.Auth.setAccessToken(undefined)
+			}
+		break
+		case 5:
+			let firebaseConfig = {
+			    apiKey: "AIzaSyBf-7zB4MCZOc-48Xsxt2cyOTCRDfI80aw",
+			    authDomain: "healthapp-client.firebaseapp.com",
+			    projectId: "healthapp-client",
+			    storageBucket: "healthapp-client.appspot.com",
+			    messagingSenderId: "1011601613020",
+			    appId: "1:1011601613020:web:2a87e02a1e4b21e2d0d419",
+			    measurementId: "G-T99K3V7HCQ"
+			  };
+
+			// Initialize Firebase
+			firebase.initializeApp(firebaseConfig);
+			firebase.auth().signOut().then(()=>{
+				console.log("구글 로그아웃 성공")
+			}).catch((err)=>{
+				console.log("구글 로그아웃 에러")
+			})
+		}
+			alert("로그아웃되었습니다.")
+			sessionStorage.clear();
+			localStorage.clear();
+			location.href="login.html";
+	}
+});
+</script>
 </html>
