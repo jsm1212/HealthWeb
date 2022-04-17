@@ -9,6 +9,7 @@
 <style>
 body{ background-color:#f5f5f5; }
 h3{ margin-left:30px; }
+.card{ margin-top:50px; }
 </style>
 </head>
 <body>
@@ -47,5 +48,134 @@ h3{ margin-left:30px; }
       </div>
     </div>
   </nav>
+  
+  <div class="card mb-3">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="../images/덤벨프레스.gif" class="img-fluid rounded-start" alt="...">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">덤벨 프레스</h5><br><br>
+        <p class="card-text">
+덤벨프레스 운동은 덤벨로 수행하는 벤치프레스 운동입니다. 초급 보다는 중급 이상의 난이도를 
+갖고있는 벤치프레스 운동을, 덤벨을 통해서 하게 되면 무게는 가벼워지지만 컨트롤은 더 힘들어집니다. 그
+래서 초보 운동인에게는 추천드리지 않습니다. 섬세하고 다양한 자극을 원하는분들께 추천하는 운동입니다.
+
+
+ <br><br>
+덤벨프레스는 가슴의 근육을 전체적으로 발달 시켜 줍니다. 대근육 운동이고 두께를 전체적으로 두텁게
+ 발달시킬수 있습니다. 또, 덤벨을 가지고 운동함으로써 볼 수 있는 장점이 있습니다.
+
+
+<br><br>
+운동 기구로 덤벨을 사용 하게 되면 가동 범위를 더 넓게 가져갈수 있습니다. 그래서 가슴의 안
+, 바깥, 중앙 등 다양하게 자극을 할 수 있습니다. 더 입체적이고 섬세한 근육을 발달 시키는데 효과적입니다.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  <div class="col">
+    <div class="card h-100">
+    <div class="card-header">
+        <small class="text-muted">구분동작 1</small>
+      </div>
+      <img src="../images/덤벨프레스2.jpg" class="card-img-top" alt="...">
+      <div class="card-body">
+        <p class="card-text">덤벨을 들고 바닥에 누워 견갑을 후인하강시키고 어깨너비보다 조금 넓게 팔을 뻗어줍니다.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card h-100">
+    <div class="card-header">
+        <small class="text-muted">구분동작 2</small>
+      </div>
+      <img src="../images/덤벨프레스1.jpg" class="card-img-top" alt="...">
+      <div class="card-body">
+        <p class="card-text">가슴을 열고 천천히 저항을 느끼며 덤벨을 내려줍니다.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card h-100">
+    <div class="card-header">
+        <small class="text-muted">구분동작 3</small>
+      </div>
+      <img src="../images/덤벨프레스3.jpg" class="card-img-top" alt="...">
+      <div class="card-body">
+        <p class="card-text">다시 역순으로 덤벨을 밀어주며 가슴을 수축시켜줍니다.</p>
+      </div>
+    </div>
+  </div>
+  </div>
 </body>
+<script>
+let str = sessionStorage.getItem("login"); // 세션저장소에서 값 빼옴
+let json = JSON.parse(str); // 문자열을 JSON으로 파싱
+let lstr = localStorage.getItem("login"); // 자동로그인했다면
+let ljson = JSON.parse(lstr); 
+
+if(json.auth!=1){
+	$("#adminPageBtn").hide();
+}
+
+$("#adminPageBtn").click(()=>{
+	location.href="memberList.html"
+});
+
+if(str != null){
+$("#userNickname").html(json.nickname+"님이 접속중입니다.");
+}else{
+$("#userNickname").html(ljson.nickname+"님이 접속중입니다.");
+}
+$("#logout").click(function(){
+	
+	if(confirm("로그아웃 하시겠습니까?") == true){
+		const userAuth = json.auth;
+		switch(userAuth){
+		case 4:
+			Kakao.init('33dac5c74d9c68aa75bc31a1474ec6cd');
+			
+			if(Kakao.Auth.getAccessToken()){
+				Kakao.API.request({
+					url:'/v1/user/unlink',
+					success:(res)=>{
+						console.log(res)
+					},
+					fail:(err)=>{
+						console.log(err)
+					},
+				})
+				Kakao.Auth.setAccessToken(undefined)
+			}
+		break
+		case 5:
+			let firebaseConfig = {
+			    apiKey: "AIzaSyBf-7zB4MCZOc-48Xsxt2cyOTCRDfI80aw",
+			    authDomain: "healthapp-client.firebaseapp.com",
+			    projectId: "healthapp-client",
+			    storageBucket: "healthapp-client.appspot.com",
+			    messagingSenderId: "1011601613020",
+			    appId: "1:1011601613020:web:2a87e02a1e4b21e2d0d419",
+			    measurementId: "G-T99K3V7HCQ"
+			  };
+
+			// Initialize Firebase
+			firebase.initializeApp(firebaseConfig);
+			firebase.auth().signOut().then(()=>{
+				console.log("구글 로그아웃 성공")
+			}).catch((err)=>{
+				console.log("구글 로그아웃 에러")
+			})
+		}
+			alert("로그아웃되었습니다.")
+			sessionStorage.clear();
+			localStorage.clear();
+			location.href="login.html";
+	}
+});
+</script>
 </html>

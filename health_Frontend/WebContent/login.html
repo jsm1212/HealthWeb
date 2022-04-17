@@ -197,15 +197,15 @@ $(document).ready(function(){
 					$("#id").val("");
 					$("#pwd").val("");
 				}else{
-					sessionStorage.setItem("login", JSON.stringify(data));// JSON data를 문자열로 변환해서 세션스토리지에 넣어줌
-					alert(data.name + " 님 환영합니다.");
-					location.href = "main.html";
+						sessionStorage.setItem("login", JSON.stringify(data));// JSON data를 문자열로 변환해서 세션스토리지에 넣어줌
+						alert(data.name + " 님 환영합니다.");
+						location.href = "main.html";
 
-					if($("#autoSave").is(":checked")){
-						localStorage.setItem("login", JSON.stringify(data));
-					}else{
-						localStorage.clear();
-					}
+						if($("#autoSave").is(":checked")){
+							localStorage.setItem("login", JSON.stringify(data));
+						}else{
+							localStorage.clear();
+						}
 				}
 			},
 			error:()=>{
