@@ -162,7 +162,7 @@ a{
 </div>
 </div>
 </body>
-<script>
+<script type="text/javascript">
 $(document).ready(function(){
 	
 let str = sessionStorage.getItem("login"); // 세션저장소에서 값 빼옴
@@ -170,7 +170,7 @@ let json = JSON.parse(str); // 문자열을 JSON으로 파싱
 let lstr = localStorage.getItem("login"); // 자동로그인했다면
 let ljson = JSON.parse(lstr); 
 
-if(json.auth!=1 || ljson.auth!=1){
+if(json.auth != 1 || ljson.auth != 1){
 	$("#adminPageBtn").hide();
 }
 if(str != null){
