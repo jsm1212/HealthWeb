@@ -50,15 +50,15 @@ h3{ margin-left:30px; }
   </nav>
   
   <div class="album py-5">
-    <div class="container">
+    <div id="container" class="container">
 
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
         <div class="col" id="work1">
           <div class="card shadow-sm">
 			<img id="work" src="images/덤벨 숄더 프레스.gif" class="card-img-top img-thumbnail">
             <div class="card-body">
-            	<h5 class="card-title" align="center">덤벨 숄더 프레스</h5>
-              <p class="card-text">덤벨 숄더 프레스는 전면 삼각근을 키우는데 매우 효과적인 운동입니다.</p>
+            	<h5  class="card-title" align="center">덤벨 숄더 프레스</h5>
+              <p  class="card-text">덤벨 숄더 프레스는 전면 삼각근을 키우는데 매우 효과적인 운동입니다.</p>
               <div class="d-flex justify-content-between align-items-center">
                 
               </div>
@@ -97,7 +97,7 @@ h3{ margin-left:30px; }
 			<img id="work" src="images/덤벨로우.gif" class="card-img-top img-thumbnail">
             <div class="card-body">
             <h5 class="card-title" align="center">덤벨 로우</h5>
-              <p class="card-text">덤벨 프레스는 광배근을 키우는데 매우 효과적인 운동입니다.</p>
+              <p class="card-text">덤벨 로우는 광배근을 키우는데 매우 효과적인 운동입니다.</p>
               <div class="d-flex justify-content-between align-items-center">
                 
               </div>
@@ -166,6 +166,7 @@ h3{ margin-left:30px; }
   </footer>
 </body>
 <script>
+$(document).ready(function(){
 	$("#work1").click(()=>{
 		location.href="works/work1.html"
 	});
@@ -190,5 +191,6 @@ h3{ margin-left:30px; }
 	$("#work8").click(()=>{
 		location.href="works/work8.html"
 	});
+});
 </script>
 </html>
