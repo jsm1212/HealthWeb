@@ -75,6 +75,9 @@ textarea{
 .deleteReply{
 	cursor: pointer;
 }
+.replyList{
+	margin: 0 2%;
+}
 
 .replyContent{
 	margin-bottom: 20px;
