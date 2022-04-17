@@ -80,13 +80,6 @@
 			  <input class="form-control span2" id="tel">
 			  <button type="button" class="btn span2 btn-secondary" id="telsend">확인</button>
 			</div>
-			<!-- <div id="twindow">
-				<div class="input-group mb-3">
-				  <span class="input-group-text span">인증번호</span>
-				  <input class="form-control span2" id="telNum">
-				  <button type="button" class="btn span2 btn-secondary" id="telok">확인</button>
-				</div>
-			</div> -->
 		</div>
 		
 		<div align="center">
@@ -129,13 +122,12 @@
 		let id = JSON.parse(login).id
 		let pwd = JSON.parse(login).pwd
 		
-		let code = "";
-		let email = "";
+		let code = -1
+		let beforeEmail = JSON.parse(login).email
 
 		// 창 숨기기
 		document.getElementById('pcwindow').style.display = 'none';
 		document.getElementById('ewindow').style.display = 'none';
-		//document.getElementById('twindow').style.display = 'none';
 		
 		// 정보 불러오기
 		$(document).ready(function(){
@@ -182,16 +174,12 @@
 		$("#emailok").click(function(){
 			if($("#emailNum").val().trim() == "" || $("#emailNum").val().trim() != code){
 				alert("인증번호를 정확하게 입력하세요");
-				$("#inputCode").val("");
+				$("#emailNum").val("");
 			} else{
 				alert("이메일 인증 완료")
+				code = 100
 			}
 		});
-		
-		// 전화번호 인증
-		/* $("#telsend").click(function(){
-			document.getElementById('twindow').style.display = 'block';
-		}); */
 		
 		// 비밀번호 변경 창 나타내기
 		$("#pwdchange").click(function(){
@@ -226,21 +214,25 @@
 		
 		// 정보 수정
 		$("#ok").click(function(){
-			$.ajax({
-				url:"http://localhost:3000/updateMember",
-				type:"post",
-				data:{id:id, nickname:$("#nickname").val().trim(), email:$("#email").val().trim(), tel:$("#tel").val().trim()},
-				success:function(msg){
-					if(msg == "yes"){
-						alert("수정 완료");
-						location.href = "mypage.html";
-					}else{
-						alert("수정 실패");
+			if(beforeEmail != $("#email").val().trim() && code != 100){
+				alert("이메일 인증을 진행하십시오.");
+			}else{
+				$.ajax({
+					url:"http://localhost:3000/updateMember",
+					type:"post",
+					data:{id:id, nickname:$("#nickname").val().trim(), email:$("#email").val().trim(), tel:$("#tel").val().trim()},
+					success:function(msg){
+						if(msg == "yes"){
+							alert("수정 완료");
+							location.href = "mypage.html";
+						}else{
+							alert("수정 실패");
+						}
+					},error:function(){
+						alert("error")
 					}
-				},error:function(){
-					alert("error")
-				}
-			});
+				});
+			}
 		});
 		
 		// 회원 탈퇴
@@ -249,7 +241,7 @@
 				$.ajax({
 					url:"http://localhost:3000/deleteMember",
 					type:"post",
-					data:id, //{"id":id}
+					data:{"id":id},
 					success:function(msg){
 						if(msg == "yes"){
 							alert("회원 탈퇴");
