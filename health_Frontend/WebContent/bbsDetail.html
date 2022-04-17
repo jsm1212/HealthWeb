@@ -6,7 +6,7 @@
 <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <link rel="shortcut icon" type="image⁄x-icon" href="https://firebasestorage.googleapis.com/v0/b/healthapp-client.appspot.com/o/images%2Fhome.png?alt=media&token=c30ebcc4-6ca5-4745-a01e-ecaf8e97d972">
-<link href="css/bbsDetail.css?ver=3" rel="stylesheet" />
+<link href="css/bbsDetail.css?ver=4" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
@@ -44,7 +44,7 @@ body {
             <a class="nav-link" aria-current="page" href="main.html">홈</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="workList">운동목록</a>
+            <a class="nav-link" href="workList.html">운동목록</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="calendar.html">운동일정</a>
@@ -95,7 +95,7 @@ body {
 				</div>				
 			</div>
 			<div id="contentBox">
-				<textarea id="content" readonly="readonly" rows="25" style="resize: none; padding:15px;"></textarea>
+				<textarea id="content" readonly="readonly" rows="25" style="resize: none; padding:15px; line-height: 150%"></textarea>
 		<br><br>
 				<div id="btnBox">
 					<div style="margin-left:0.6%">
@@ -139,6 +139,8 @@ body {
 		
 	</div>
 </div>
+
+<img alt="불러오기 실패" src="">
 
 <div class="container">
   <footer class="py-3 my-4">
@@ -468,7 +470,7 @@ function deleteReply(seq){
 const prev = document.querySelector('.prev'); //이전 버튼 
 const next = document.querySelector('.next'); //다음 버튼 
 const slideWidth = 500; //한개의 슬라이드 넓이 
-const slideMargin = 350; //슬라이드간의 margin 값 
+const slideMargin = 360; //슬라이드간의 margin 값 
  
 function moveSlide(num) { 
 	slides.style.left = -num * 400 + 'px'; 
