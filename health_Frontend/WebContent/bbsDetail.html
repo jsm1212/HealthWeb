@@ -371,7 +371,7 @@ function getBbs() {
 			}
 			
 			$("#content").text(bbs.content);
-			if(userInfo.id != bbs.id){
+			if(userInfo.id != bbs.id && userInfo.auth != 1){
 				$("#updateBtn").hide();
 				$("#deleteBtn").hide();
 			}

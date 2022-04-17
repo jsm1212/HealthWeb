@@ -12,9 +12,6 @@
 	}
 	#app{margin:auto; margin-top:50px;
 		 width:90%; padding: 10px;}
-	.btn-secondary{
-		background-color:#333;
-	}
 	.span{border-radius: 10px 0 0 10px; background-color:#ff000000; width: 100px;}
 	.span2{border-radius: 0 10px 10px 0;}
 	.bigbtn{width: 200px; height: 70px; margin: 10px;}
@@ -23,13 +20,14 @@
 	h2{ margin: 30px 0;}
 </style>
 <body>
-<header class="blog-header py-3">
-<h3 align="left">마이페이지</h3>
-<div align="right">
+ <header class="blog-header py-3 d-flex">
+        
+ <h3 class="flex-grow-1">마이페이지</h3>
+<div style="margin-right:30px;">
 	<span id="userNickname"></span>
+	<button type="button" class="btn btn-sm btn-secondary" id="logout">로그아웃</button>
 </div>
-  </header>
-  
+  </header>  
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Tenth navbar example">
     <div class="container-fluid">
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample08" aria-controls="navbarsExample08" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,13 +43,16 @@
             <a class="nav-link" href="workList.html">운동목록</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="calendar.html">운동일정</a>
+            <a id="calendarBtn" class="nav-link" href="calendar.html">운동일정</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="bbsList.html">자유게시판</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="mypage.html">마이페이지</a>
+            <a id="mypageBtn" class="nav-link active" aria-current="page" href="mypage.html">마이페이지</a>
+          </li>
+          <li class="nav-item">
+            <a id="adminPageBtn" class="nav-link" href="memberList.html">회원관리</a>
           </li>
         </ul>
       </div>
@@ -98,16 +99,14 @@
 		</div>
 		<br>
 		<div align="center">
-			<button type="button" class="btn btn-secondary" id="update">정보 수정</button>
-			<button type="button" class="btn btn-warning" id="logout">로그 아웃</button>
-
+			<button type="button" class="btn btn-dark" id="update">정보 수정</button>
 		</div>
 		<br><br>
 		<div align="center">
-			<button type="button" class="btn bigbtn btn-secondary" id="routine">운동 루틴 확인</button>
-			<button type="button" class="btn bigbtn btn-secondary" id="write">게시글 확인</button><br>
-			<button type="button" class="btn bigbtn btn-secondary" id="reply">댓글 확인</button>
-			<button type="button" class="btn bigbtn btn-secondary" id="like">좋아요 누른 글 확인</button>
+			<button type="button" class="btn bigbtn btn-dark" id="routine">운동 루틴 확인</button>
+			<button type="button" class="btn bigbtn btn-dark" id="write">게시글 확인</button><br>
+			<button type="button" class="btn bigbtn btn-dark" id="reply">댓글 확인</button>
+			<button type="button" class="btn bigbtn btn-dark" id="like">좋아요 누른 글 확인</button>
 		</div>
 	</div>
 	
@@ -120,64 +119,21 @@
 </div>
 
 	<script type="text/javascript">
-	
-		
 		let login = sessionStorage.getItem("login");
 		let id = JSON.parse(login).id
+		//alert(id)
 		
 		let json = JSON.parse(login); // 문자열을 JSON으로 파싱
 		let lstr = localStorage.getItem("login"); // 자동로그인했다면
-		let ljson = JSON.parse(lstr); 
-
-		//alert(id)
-				
-		$(document).ready(function(){
-			// 정보 불러오기
-			$.ajax({
-				url:"http://localhost:3000/getInformation",
-				type:"post",
-				data:{id:id},
-				success:function(data){					
-					$("#name").text(data.name);
-					$("#nickname").text(data.nickname);
-					$("#gender").text(data.gender);
-					$("#age").text(data.age);
-					$("#email").text(data.email);
-					$("#tel").text(data.tel);
-					$("#regidate").text(data.regidate.substring(0, 10));
-				},error:function(){
-					alert("error")
-				}
-			});
-			// 정보수정
-			$("#update").click(function(){
-				location.href = "myupdate.html";
-			});
-			
-			// 운동루틴 확인
-			$("#routine").click(function(){
-				location.href = "myroutine.html";
-			});
-			
-			// 게시글 확인
-			$("#write").click(function(){
-				location.href = "mywrite.html";
-			});
-			
-			// 댓글 확인
-			$("#reply").click(function(){
-				location.href = "myreply.html";
-			});
-			
-			// 좋아요 확인
-			$("#like").click(function(){
-				location.href = "mylike.html";
-			});
-			
-		});
+		let ljson = JSON.parse(lstr);
 		
+		if(login != null){
+			$("#userNickname").html(json.nickname+"님이 접속중입니다.");
+		}else{
+		$("#userNickname").html(ljson.nickname+"님이 접속중입니다.");
+		}
+
 		$("#logout").click(function(){
-			
 			if(confirm("로그아웃 하시겠습니까?") == true){
 				const userAuth = json.auth;
 				switch(userAuth){
@@ -222,7 +178,57 @@
 					location.href="login.html";
 			}
 		});
-		
+				
+		$(document).ready(function(){
+			if(json.auth!=1){
+				$("#adminPageBtn").hide();
+			}else{
+				$("#calendarBtn").hide();
+				$("#mypageBtn").hide();
+			}
+			
+			// 정보 불러오기
+			$.ajax({
+				url:"http://localhost:3000/getInformation",
+				type:"post",
+				data:{id:id},
+				success:function(data){					
+					$("#name").text(data.name);
+					$("#nickname").text(data.nickname);
+					$("#gender").text(data.gender);
+					$("#age").text(data.age);
+					$("#email").text(data.email);
+					$("#tel").text(data.tel);
+					$("#regidate").text(data.regidate.substring(0, 10));
+				},error:function(){
+					alert("error")
+				}
+			});
+			// 정보수정
+			$("#update").click(function(){
+				location.href = "myupdate.html";
+			});
+			
+			// 운동루틴 확인
+			$("#routine").click(function(){
+				location.href = "myroutine.html";
+			});
+			
+			// 게시글 확인
+			$("#write").click(function(){
+				location.href = "mywrite.html";
+			});
+			
+			// 댓글 확인
+			$("#reply").click(function(){
+				location.href = "myreply.html";
+			});
+			
+			// 좋아요 확인
+			$("#like").click(function(){
+				location.href = "mylike.html";
+			});
+		});
 	</script>
 </body>
 </html>

@@ -49,13 +49,16 @@ table{
             <a class="nav-link" href="workList.html">운동목록</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="calendar.html">운동일정</a>
+            <a id="calendarBtn" class="nav-link" href="calendar.html">운동일정</a>
           </li>
           <li class="nav-item">
             <a class="nav-link active" href="bbsList.html">자유게시판</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="mypage.html">마이페이지</a>
+            <a id="mypageBtn" class="nav-link" href="mypage.html">마이페이지</a>
+          </li>
+          <li class="nav-item">
+            <a id="adminPageBtn" class="nav-link" href="memberList.html">회원관리</a>
           </li>
         </ul>
       </div>
@@ -132,11 +135,17 @@ table{
 
 //로그아웃기능
 $(document).ready(function(){
-	
 	let str = sessionStorage.getItem("login"); // 세션저장소에서 값 빼옴
 	let json = JSON.parse(str); // 문자열을 JSON으로 파싱
 	let lstr = localStorage.getItem("login"); // 자동로그인했다면
-	let ljson = JSON.parse(lstr); 
+	let ljson = JSON.parse(lstr);
+	
+	if(json.auth!=1){
+		$("#adminPageBtn").hide();
+	}else{
+		$("#calendarBtn").hide();
+		$("#mypageBtn").hide();
+	}
 
 	if(str != null){
 	$("#userNickname").html(json.nickname+"님이 접속중입니다.");
