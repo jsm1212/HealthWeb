@@ -9,6 +9,7 @@
 <style>
 body{ background-color:#f5f5f5; }
 h3{ margin-left:30px; }
+.card{ margin-top:50px; }
 </style>
 </head>
 <body>
@@ -127,4 +128,70 @@ h3{ margin-left:30px; }
   </div>
   </div>
 </body>
+<script>
+let str = sessionStorage.getItem("login"); // 세션저장소에서 값 빼옴
+let json = JSON.parse(str); // 문자열을 JSON으로 파싱
+let lstr = localStorage.getItem("login"); // 자동로그인했다면
+let ljson = JSON.parse(lstr); 
+
+if(json.auth!=1){
+	$("#adminPageBtn").hide();
+}
+
+$("#adminPageBtn").click(()=>{
+	location.href="memberList.html"
+});
+
+if(str != null){
+$("#userNickname").html(json.nickname+"님이 접속중입니다.");
+}else{
+$("#userNickname").html(ljson.nickname+"님이 접속중입니다.");
+}
+$("#logout").click(function(){
+	
+	if(confirm("로그아웃 하시겠습니까?") == true){
+		const userAuth = json.auth;
+		switch(userAuth){
+		case 4:
+			Kakao.init('33dac5c74d9c68aa75bc31a1474ec6cd');
+			
+			if(Kakao.Auth.getAccessToken()){
+				Kakao.API.request({
+					url:'/v1/user/unlink',
+					success:(res)=>{
+						console.log(res)
+					},
+					fail:(err)=>{
+						console.log(err)
+					},
+				})
+				Kakao.Auth.setAccessToken(undefined)
+			}
+		break
+		case 5:
+			let firebaseConfig = {
+			    apiKey: "AIzaSyBf-7zB4MCZOc-48Xsxt2cyOTCRDfI80aw",
+			    authDomain: "healthapp-client.firebaseapp.com",
+			    projectId: "healthapp-client",
+			    storageBucket: "healthapp-client.appspot.com",
+			    messagingSenderId: "1011601613020",
+			    appId: "1:1011601613020:web:2a87e02a1e4b21e2d0d419",
+			    measurementId: "G-T99K3V7HCQ"
+			  };
+
+			// Initialize Firebase
+			firebase.initializeApp(firebaseConfig);
+			firebase.auth().signOut().then(()=>{
+				console.log("구글 로그아웃 성공")
+			}).catch((err)=>{
+				console.log("구글 로그아웃 에러")
+			})
+		}
+			alert("로그아웃되었습니다.")
+			sessionStorage.clear();
+			localStorage.clear();
+			location.href="login.html";
+	}
+});
+</script>
 </html>
