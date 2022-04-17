@@ -17,19 +17,19 @@ textarea{
 	justify-content: center;
 }
 
-.Horizontal{
+/* .Horizontal{
 	display: flex;
-}
+} */
 
 #standardTitle{
 	width: 10%;
 	text-align: center;
 }
 
-#inputTitle{
+/* #inputTitle{
 	width: 90%;
 	padding: 0 1% 0 1%;
-}
+} */
 
 #title{
 	width: 99%;
