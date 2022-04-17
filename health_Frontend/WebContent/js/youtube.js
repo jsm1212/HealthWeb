@@ -7,34 +7,34 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 // 3. This function creates an <iframe> (and YouTube player)
 //    after the API code downloads.
 var section = {
-	start: 25,
+	start: 30,
 	end: 140
 }
 
-var mainplayer;
-
+var player;
 function onYouTubeIframeAPIReady() {
-	mainplayer = new YT.Player('mainplayer', {
-		videoId: 'nuJ4ySrXOM8',
-		playerVars:{
-			autoplay: true,
-			showsearch:0,
-			rel:0,
-	      	loop: true,
-		  	controls:0,
-	      	mute:1,
-	      	playlist:'nuJ4ySrXOM8'
-		},
-		events:{
-			onReady:onPlayerReady,
-	      	onStateChange:onPlayerStateChange
-		}
-	});	
+  player = new YT.Player('player', {
+    videoId: 'kgWv6kYmn6s',
+    playerVars: {
+      autoplay: true,
+      loop: true,
+	  controls:0,
+      mute:1,
+      rel:0
+    },
+    events: {
+      /*onReady: function (event) {
+        event.target.mute()
+      }*/
+	  onReady:onPlayerReady,
+      onStateChange:onPlayerStateChange
+    }
+  });
 }
 
 function onPlayerReady(event) {
-	mainplayer.seekTo(section.start);
-	mainplayer.playVideo();
+	player.seekTo(section.start);
+	player.playVideo();
 }
 
 function onPlayerStateChange(event) {
@@ -45,5 +45,5 @@ function onPlayerStateChange(event) {
 }
 
 function restartVideoSection() {
-  mainplayer.seekTo(section.start);
+  player.seekTo(section.start);
 }

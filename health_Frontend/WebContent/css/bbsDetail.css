@@ -10,6 +10,7 @@ textarea{
 	overflow-y: hidden;
 	overflow-x: hidden;
 	margin: 15px 0 0 0;
+	outline: none;
 }
 
 .contentCenterPosition{
@@ -75,17 +76,24 @@ textarea{
 .deleteReply{
 	cursor: pointer;
 }
+.replyList{
+	margin: 0 2%;
+}
 
 .replyContent{
 	margin-bottom: 20px;
+	padding-bottom : 20px;
+	border-bottom: 1px solid gray;
 }
 
 #writeReplyFrame{
 	padding: 10px 1%;
 }
 
-#replyWrite{
-	
+.replynickname{
+	font-size: 20px;
+	margin-bottom: 15px;
+	font-weight: 600;
 }
 
 #replyBtnFrame{

@@ -1,7 +1,5 @@
 @charset "UTF-8";
-div{
-	border: 1px solid black;
-}
+
 input{
 	width: 99%;
 }
@@ -14,6 +12,7 @@ textarea{
 	overflow-x: hidden;
 	margin: 15px 0 0 0;
 }
+
 
 .contentCenterPosition{
 	display: flex;

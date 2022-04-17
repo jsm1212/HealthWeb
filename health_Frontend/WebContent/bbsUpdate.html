@@ -8,22 +8,26 @@
 <link rel="shortcut icon" type="image⁄x-icon" href="https://firebasestorage.googleapis.com/v0/b/healthapp-client.appspot.com/o/images%2Fhome.png?alt=media&token=c30ebcc4-6ca5-4745-a01e-ecaf8e97d972">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-<link href="css/bbsUpdate.css?ver=1" rel="stylesheet" />
+<link href="css/bbsUpdate.css?ver=4" rel="stylesheet" />
 </head>
 <style>
 #spaceBetween{
 	display: flex;
 	justify-content: space-between;
 }
+body{
+	background-color:#f5f5f5;
+}
 </style>
 <body>
+	
 <header class="blog-header py-3">
 <div id="spaceBetween">
 	<div style="padding-left:2%;">
 		<h3 align="left" style="display:inline;">게시글 쓰기</h3>
 	</div>
 	
-	<div align="right" style="display:inline;">
+	<div align="right" style="display:inline; margin-right:30px;">
 		<span id="userNickname"></span>
 		<button type="button" class="btn btn-sm btn-secondary" id="logout" >로그아웃</button>
 	</div>
@@ -57,35 +61,35 @@
       </div>
     </div>
   </nav>
-
+<br>
 <div class="contentCenterPosition">
-	<div id="mainFrame">
-		<!-- 제목 -->
-		<div id=titleFrame>
-			<div style="width:10%;">
-				제목
-			</div>
-			<div style="width:90%; padding: 0 1%;">
-				<input type="text" id="title">
-			</div>
-		</div>
-		
-		<!-- 작성자, 작성일, 조회수, 좋아요 -->
-		<div id="writerInfo">
-			<!-- 작성자 -->
-			<div class="infoHorizontal" style="width:45%">
-				<input type="text" id="nickname" readonly="readonly">
-			</div>
-			<!-- 작성일 -->
-			<div class="infoHorizontal" style="width:20%">
-				<input type="text" id="wdate" readonly="readonly">
-			</div>
-			<!-- 좋아요 / 조회수 -->
-			<div class="infoHorizontal" style="width:13%" id="likeAndCount">
-				
-			</div>			
-		</div>
-		
+	<div id="mainFrame">	
+		<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">제목 : <input type="text" id="title"
+							readonly="readonly" size="20"
+							style="width: 50%; border: 0; background-color: #f5f5f5;">
+						</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr>
+						<th scope="row"><input type="text" id="nickname"
+							readonly="readonly"
+							style="width: 100%; border: 0; background-color: #f5f5f5;">
+						</th>
+						<td><input type="text" id="wdate" readonly="readonly"
+							
+							style="width: 100%; border: 0; background-color: #f5f5f5;"></td>
+						<td>
+							<div class="infoHorizontal" style="width: 100%" id="likeAndCount"></div>
+						</td>
+					</tr>
+				</tbody>
+			</table> 		
+	
 		<!-- 내용 -->
 		<div id="contentFrame" align="center">
 			<div id="imgPosition">
@@ -103,20 +107,26 @@
 				</div>				
 			</div>
 			<div id="contentBox">
-				<textarea id="content"></textarea>
+				<textarea id="content"  rows="15" style="resize: none; padding:15px;"></textarea>
+<br><br>
 				<div id="btnBox">
 					<div>
-						<button type="button" id="goToDetail">게시글로 돌아가기</button>
+						<button type="button" id="goToDetail" class="btn bigbtn btn-secondary" style="color:#fff; background-color: #333;">게시글로 돌아가기</button>
 					</div>
 					<div align="right" style="width:15%;">
-						<button type="button" id="updateBtn">수정하기</button>
+						<button type="button" id="updateBtn" class="btn bigbtn btn-secondary" style="color:#fff; background-color: #333;">수정하기</button>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
-
+<div class="container">
+	 <footer class="py-3 my-4">
+		<ul class="nav justify-content-center border-bottom"></ul>
+		<p class="text-center text-muted">&copy; 멀티캠퍼스 6조</p>
+	 </footer>
+</div>
 <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase.js"></script>
 <script type="text/javascript">
 
@@ -230,7 +240,7 @@ $(document).ready(() => {
 			const wdate= dateArr[0] + ":" + dateArr[1]	// 변수에 원하는 표기방법으로 저장
 			$("#wdate").val(wdate);
 			// 좋아요 및 조회수
-			$("#likeAndCount").text(bbs.bbsLike + " / " + bbs.readcount);
+			$("#likeAndCount").text("👍 " + bbs.bbsLike + " / 👀 " + bbs.readcount);
 			if(bbs.bbsImage == null){
 				$("#imageStr").val("");
 				document.querySelector("#imgPosition").style.display="none";
