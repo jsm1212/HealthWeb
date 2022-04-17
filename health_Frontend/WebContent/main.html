@@ -67,7 +67,7 @@ a{
       </button>
 
       <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample08">
-        <ul class="navbar-nav">
+        <ul id="navbar-nav" class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="main.html">홈</a>
           </li>
@@ -170,9 +170,14 @@ let json = JSON.parse(str); // 문자열을 JSON으로 파싱
 let lstr = localStorage.getItem("login"); // 자동로그인했다면
 let ljson = JSON.parse(lstr); 
 
-if(json.auth!=1 || ljson.auth!=1){
+if(json.auth!=1){
 	$("#adminPageBtn").hide();
 }
+
+$("#adminPageBtn").click(()=>{
+	location.href="memberList.html"
+});
+
 if(str != null){
 $("#userNickname").html(json.nickname+"님이 접속중입니다.");
 }else{
