@@ -120,8 +120,15 @@
 </div>
 
 	<script type="text/javascript">
+	
+		
 		let login = sessionStorage.getItem("login");
 		let id = JSON.parse(login).id
+		
+		let json = JSON.parse(login); // 문자열을 JSON으로 파싱
+		let lstr = localStorage.getItem("login"); // 자동로그인했다면
+		let ljson = JSON.parse(lstr); 
+
 		//alert(id)
 				
 		$(document).ready(function(){
