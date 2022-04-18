@@ -10,6 +10,7 @@
 body{ background-color:#f5f5f5; }
 h3{ margin-left:30px; }
 .card{ margin-top:50px; }
+.back{position: absolute;}
 </style>
 </head>
 <body>
@@ -48,7 +49,6 @@ h3{ margin-left:30px; }
       </div>
     </div>
   </nav>
-  
   <div class="card mb-3">
   <div class="row g-0">
     <div class="col-md-4">
@@ -72,6 +72,14 @@ h3{ margin-left:30px; }
 	초보자는 바벨보다 덤벨로 어깨 근육 사용법을 익히는 게 더 도움이 됩니다.<br>
 	고중량보다는 저,중중량을 다루는 사람에게 자극 위주에 운동을 하기에 적합합니다.  
         </p>
+        <div id="heart" style="width: 55px;">
+	      	<div>
+	      		<div class="back" id="emty"><img src="../images/emtyheart.png" width="50px"></div>
+	      	</div>
+	      	<div>
+	      		<div id="fill"><img src="../images/fillheart.png" width="50px"></div>
+	      	</div>
+	     </div>
       </div>
     </div>
   </div>
@@ -115,69 +123,121 @@ h3{ margin-left:30px; }
 </body>
 
 <script>
-let str = sessionStorage.getItem("login"); // 세션저장소에서 값 빼옴
-let json = JSON.parse(str); // 문자열을 JSON으로 파싱
-let lstr = localStorage.getItem("login"); // 자동로그인했다면
-let ljson = JSON.parse(lstr); 
-
-if(json.auth!=1){
-	$("#adminPageBtn").hide();
-}
-
-$("#adminPageBtn").click(()=>{
-	location.href="memberList.html"
-});
-
-if(str != null){
-$("#userNickname").html(json.nickname+"님이 접속중입니다.");
-}else{
-$("#userNickname").html(ljson.nickname+"님이 접속중입니다.");
-}
-$("#logout").click(function(){
+$(document).ready(function(){
+	let str = sessionStorage.getItem("login"); // 세션저장소에서 값 빼옴
+	let json = JSON.parse(str); // 문자열을 JSON으로 파싱
+	let lstr = localStorage.getItem("login"); // 자동로그인했다면
+	let ljson = JSON.parse(lstr); 
 	
-	if(confirm("로그아웃 하시겠습니까?") == true){
-		const userAuth = json.auth;
-		switch(userAuth){
-		case 4:
-			Kakao.init('33dac5c74d9c68aa75bc31a1474ec6cd');
-			
-			if(Kakao.Auth.getAccessToken()){
-				Kakao.API.request({
-					url:'/v1/user/unlink',
-					success:(res)=>{
-						console.log(res)
-					},
-					fail:(err)=>{
-						console.log(err)
-					},
-				})
-				Kakao.Auth.setAccessToken(undefined)
+	// 좋아요 이미지
+	$.ajax({
+		url:"http://localhost:3000/likeCountWork",
+		type:"post",
+		data:{work_no:41, user_id:json.id},
+		success:function(msg){
+			//alert(msg)
+			if(msg == "notCount"){
+				$("#emty").hide()
+				$("#fill").show()
+			}else{
+				$("#emty").show()
+				$("#fill").hide()
 			}
-		break
-		case 5:
-			let firebaseConfig = {
-			    apiKey: "AIzaSyBf-7zB4MCZOc-48Xsxt2cyOTCRDfI80aw",
-			    authDomain: "healthapp-client.firebaseapp.com",
-			    projectId: "healthapp-client",
-			    storageBucket: "healthapp-client.appspot.com",
-			    messagingSenderId: "1011601613020",
-			    appId: "1:1011601613020:web:2a87e02a1e4b21e2d0d419",
-			    measurementId: "G-T99K3V7HCQ"
-			  };
-
-			// Initialize Firebase
-			firebase.initializeApp(firebaseConfig);
-			firebase.auth().signOut().then(()=>{
-				console.log("구글 로그아웃 성공")
-			}).catch((err)=>{
-				console.log("구글 로그아웃 에러")
-			})
+		},error:function(){
+			alert("error")
 		}
-			alert("로그아웃되었습니다.")
-			sessionStorage.clear();
-			localStorage.clear();
-			location.href="login.html";
+	});
+	
+	// 좋아요 클릭
+	$("#heart").click(function(){
+		$.ajax({
+			url:"http://localhost:3000/likeCountWork",
+			type:"post",
+			data:{work_no:41, user_id:json.id},
+			success:function(msg){
+				if(msg == "notCount"){
+					$("#emty").show()
+					$("#fill").hide()
+					
+					$.ajax({
+						url:"http://localhost:3000/likeCountCancelWork",
+						type:"post",
+						data:{work_no:41, user_id:json.id},
+						success:function(msg){
+							//alert(msg)
+						},error:function(){
+							alert("error")
+						}
+					});
+				}else{
+					$("#emty").hide()
+					$("#fill").show()
+				}
+			},error:function(){
+				alert("error")
+			}
+		});
+	});
+	
+	if(json.auth!=1){
+		$("#adminPageBtn").hide();
 	}
+	
+	$("#adminPageBtn").click(()=>{
+		location.href="memberList.html"
+	});
+	
+	if(str != null){
+	$("#userNickname").html(json.nickname+"님이 접속중입니다.");
+	}else{
+	$("#userNickname").html(ljson.nickname+"님이 접속중입니다.");
+	}
+	$("#logout").click(function(){
+		
+		if(confirm("로그아웃 하시겠습니까?") == true){
+			const userAuth = json.auth;
+			switch(userAuth){
+			case 4:
+				Kakao.init('33dac5c74d9c68aa75bc31a1474ec6cd');
+				
+				if(Kakao.Auth.getAccessToken()){
+					Kakao.API.request({
+						url:'/v1/user/unlink',
+						success:(res)=>{
+							console.log(res)
+						},
+						fail:(err)=>{
+							console.log(err)
+						},
+					})
+					Kakao.Auth.setAccessToken(undefined)
+				}
+			break
+			case 5:
+				let firebaseConfig = {
+				    apiKey: "AIzaSyBf-7zB4MCZOc-48Xsxt2cyOTCRDfI80aw",
+				    authDomain: "healthapp-client.firebaseapp.com",
+				    projectId: "healthapp-client",
+				    storageBucket: "healthapp-client.appspot.com",
+				    messagingSenderId: "1011601613020",
+				    appId: "1:1011601613020:web:2a87e02a1e4b21e2d0d419",
+				    measurementId: "G-T99K3V7HCQ"
+				  };
+	
+				// Initialize Firebase
+				firebase.initializeApp(firebaseConfig);
+				firebase.auth().signOut().then(()=>{
+					console.log("구글 로그아웃 성공")
+				}).catch((err)=>{
+					console.log("구글 로그아웃 에러")
+				})
+			}
+				alert("로그아웃되었습니다.")
+				sessionStorage.clear();
+				localStorage.clear();
+				location.href="login.html";
+		}
+	});
 });
 </script>
 </html>

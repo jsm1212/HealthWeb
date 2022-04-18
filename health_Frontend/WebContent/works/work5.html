@@ -10,6 +10,7 @@
 body{ background-color:#f5f5f5; }
 h3{ margin-left:30px; }
 .card{ margin-top:50px; }
+.back{position: absolute;}
 </style>
 </head>
 <body>
@@ -74,6 +75,14 @@ h3{ margin-left:30px; }
 어떤 운동을 하던 자신에게 맞는 강도로 해야 합니다. 관절에 문제가 있는 사람은 스쿼트를 피하고, 운동 중 통증이 발생하면 즉시 멈추세요.
 
         </p>
+        <div id="heart" style="width: 55px;">
+	      	<div>
+	      		<div class="back" id="emty"><img src="../images/emtyheart.png" width="50px"></div>
+	      	</div>
+	      	<div>
+	      		<div id="fill"><img src="../images/fillheart.png" width="50px"></div>
+	      	</div>
+	     </div>
       </div>
     </div>
   </div>
@@ -116,10 +125,61 @@ h3{ margin-left:30px; }
   </div>
 </body>
 <script>
+$(document).ready(function(){
 let str = sessionStorage.getItem("login"); // 세션저장소에서 값 빼옴
 let json = JSON.parse(str); // 문자열을 JSON으로 파싱
 let lstr = localStorage.getItem("login"); // 자동로그인했다면
-let ljson = JSON.parse(lstr); 
+let ljson = JSON.parse(lstr);
+
+//좋아요 이미지
+$.ajax({
+	url:"http://localhost:3000/likeCountWork",
+	type:"post",
+	data:{work_no:45, user_id:json.id},
+	success:function(msg){
+		//alert(msg)
+		if(msg == "notCount"){
+			$("#emty").hide()
+			$("#fill").show()
+		}else{
+			$("#emty").show()
+			$("#fill").hide()
+		}
+	},error:function(){
+		alert("error")
+	}
+});
+
+// 좋아요 클릭
+$("#heart").click(function(){
+	$.ajax({
+		url:"http://localhost:3000/likeCountWork",
+		type:"post",
+		data:{work_no:45, user_id:json.id},
+		success:function(msg){
+			if(msg == "notCount"){
+				$("#emty").show()
+				$("#fill").hide()
+				
+				$.ajax({
+					url:"http://localhost:3000/likeCountCancelWork",
+					type:"post",
+					data:{work_no:45, user_id:json.id},
+					success:function(msg){
+						//alert(msg)
+					},error:function(){
+						alert("error")
+					}
+				});
+			}else{
+				$("#emty").hide()
+				$("#fill").show()
+			}
+		},error:function(){
+			alert("error")
+		}
+	});
+});
 
 if(json.auth!=1){
 	$("#adminPageBtn").hide();
@@ -179,6 +239,7 @@ $("#logout").click(function(){
 			localStorage.clear();
 			location.href="login.html";
 	}
+});
 });
 </script>
 </html>

@@ -10,6 +10,7 @@
 body{ background-color:#f5f5f5; }
 h3{ margin-left:30px; }
 .card{ margin-top:50px; }
+.back{position: absolute;}
 </style>
 </head>
 <body>
@@ -71,6 +72,14 @@ h3{ margin-left:30px; }
 <br><br>
 운동 기구로 덤벨을 사용 하게 되면 가동 범위를 더 넓게 가져갈수 있습니다. 그래서 가슴의 안
 , 바깥, 중앙 등 다양하게 자극을 할 수 있습니다. 더 입체적이고 섬세한 근육을 발달 시키는데 효과적입니다.</p>
+<div id="heart" style="width: 55px;">
+	      	<div>
+	      		<div class="back" id="emty"><img src="../images/emtyheart.png" width="50px"></div>
+	      	</div>
+	      	<div>
+	      		<div id="fill"><img src="../images/fillheart.png" width="50px"></div>
+	      	</div>
+	     </div>
       </div>
     </div>
   </div>
@@ -113,10 +122,61 @@ h3{ margin-left:30px; }
   </div>
 </body>
 <script>
+$(document).ready(function(){
 let str = sessionStorage.getItem("login"); // 세션저장소에서 값 빼옴
 let json = JSON.parse(str); // 문자열을 JSON으로 파싱
 let lstr = localStorage.getItem("login"); // 자동로그인했다면
 let ljson = JSON.parse(lstr); 
+
+//좋아요 이미지
+$.ajax({
+	url:"http://localhost:3000/likeCountWork",
+	type:"post",
+	data:{work_no:43, user_id:json.id},
+	success:function(msg){
+		//alert(msg)
+		if(msg == "notCount"){
+			$("#emty").hide()
+			$("#fill").show()
+		}else{
+			$("#emty").show()
+			$("#fill").hide()
+		}
+	},error:function(){
+		alert("error")
+	}
+});
+
+// 좋아요 클릭
+$("#heart").click(function(){
+	$.ajax({
+		url:"http://localhost:3000/likeCountWork",
+		type:"post",
+		data:{work_no:43, user_id:json.id},
+		success:function(msg){
+			if(msg == "notCount"){
+				$("#emty").show()
+				$("#fill").hide()
+				
+				$.ajax({
+					url:"http://localhost:3000/likeCountCancelWork",
+					type:"post",
+					data:{work_no:43, user_id:json.id},
+					success:function(msg){
+						//alert(msg)
+					},error:function(){
+						alert("error")
+					}
+				});
+			}else{
+				$("#emty").hide()
+				$("#fill").show()
+			}
+		},error:function(){
+			alert("error")
+		}
+	});
+});
 
 if(json.auth!=1){
 	$("#adminPageBtn").hide();
@@ -176,6 +236,7 @@ $("#logout").click(function(){
 			localStorage.clear();
 			location.href="login.html";
 	}
+});
 });
 </script>
 </html>
