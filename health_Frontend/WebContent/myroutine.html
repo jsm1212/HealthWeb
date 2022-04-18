@@ -54,17 +54,7 @@
 				<tr><th width="30%">자세</th><th width="20%">운동명</th><th>소개</th></tr>
 			</thead>
 			
-			<tbody>
-				<tr id="work8">
-					<th><img src="images/플랭크운동.gif" width="70%"></th>
-					<th><h5 class="card-title" align="center" style="margin-top: 50px">플랭크</h5></th>
-					<th><p align="center" style="margin-top: 50px">플랭크는 강한 복근과 코어 근육을 만들어 줍니다.</p></th>
-				</tr>
-				<tr id="work2">
-					<th><img src="images/덤벨 스쿼트.gif" width="70%"></th>
-					<th><h5 class="card-title" align="center" style="margin-top: 50px">덤벨 스쿼트</h5></th>
-					<th><p align="center" style="margin-top: 50px">덤벨 스쿼트는 하체 전반적인 근육을 키우는데 매우 효과적인 운동입니다.</p></th>
-				</tr>
+			<tbody id="tbody">
 			</tbody>
 		</table>
 	</div>
@@ -127,11 +117,69 @@
 			}
 		});
 		$(document).ready(function(){
-			$("#work2").click(()=>{
-				location.href="works/work2.html"
-			});
-			$("#work8").click(()=>{
-				location.href="works/work8.html"
+			$.ajax({
+				url:"http://localhost:3000/getMyRoutine",
+				type:"get",
+				data:{id:json.id},
+				success:function(list){
+					$.each(list, function(i, item){
+						//alert(JSON.stringify(item))
+						let str=""
+						switch(item.workseq){
+							case 41: str = "<tr>"
+										+	 "<td><a href='works/work1.html><img src='images/" + item.workimage + " width='70%''></td>"
+										+	 "<td>" + item.workname + "</td>"
+										+	 "<td>" + item.workcontent + "</td>"
+										+  "</tr>"
+										break;
+							case 42: str = "<tr>"
+										+	 "<td><a href='works/work2.html><img src='images/" + item.workimage + " width='70%''></td>"
+										+	 "<td>" + item.workname + "</td>"
+										+	 "<td>" + item.workcontent + "</td>"
+										+  "</tr>"
+										break;
+							case 43: str = "<tr>"
+										+	 "<td><a href='works/work3.html><img src='images/" + item.workimage + " width='70%''></td>"
+										+	 "<td>" + item.workname + "</td>"
+										+	 "<td>" + item.workcontent + "</td>"
+										+  "</tr>"
+										break;
+							case 44: str = "<tr>"
+										+	 "<td><a href='works/work4.html><img src='images/" + item.workimage + " width='70%''></td>"
+										+	 "<td>" + item.workname + "</td>"
+										+	 "<td>" + item.workcontent + "</td>"
+										+  "</tr>"
+										break;
+							case 45: str = "<tr>"
+										+	 "<td><a href='works/work5.html><img src='images/" + item.workimage + " width='70%''></td>"
+										+	 "<td>" + item.workname + "</td>"
+										+	 "<td>" + item.workcontent + "</td>"
+										+  "</tr>"
+										break;
+							case 46: str = "<tr>"
+										+	 "<td><a href='works/work6.html><img src='images/" + item.workimage + " width='70%''></td>"
+										+	 "<td>" + item.workname + "</td>"
+										+	 "<td>" + item.workcontent + "</td>"
+										+  "</tr>"
+										break;
+							case 47: str = "<tr>"
+										+	 "<td><a href='works/work7.html><img src='images/" + item.workimage + " width='70%''></td>"
+										+	 "<td>" + item.workname + "</td>"
+										+	 "<td>" + item.workcontent + "</td>"
+										+  "</tr>"
+										break;
+							case 48: str = "<tr>"
+										+	 "<td><a href='works/work8.html><img src='images/" + item.workimage + " width='70%''></td>"
+										+	 "<td>" + item.workname + "</td>"
+										+	 "<td>" + item.workcontent + "</td>"
+										+  "</tr>"
+										break;
+						};
+						$("#tbody").append(str);
+					});
+				},error:function(){
+					alert("error");
+				}
 			});
 		});
 	</script>
